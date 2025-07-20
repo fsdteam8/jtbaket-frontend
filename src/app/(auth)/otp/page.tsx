@@ -1,16 +1,15 @@
-
 import React from "react";
-import LoginForm from "./_components/login-form";
 import AuthLayoutDesign from "../_components/auth-layout";
+import OtpForm from "./_components/otp-form";
 
-const LoginPage = () => {
+const OtpFormPage = () => {
   return (
     <div>
       <AuthLayoutDesign>
-        <LoginForm />
+        <OtpForm />
       </AuthLayoutDesign>
     </div>
   );
 };
 
-export default LoginPage;
+export default OtpFormPage;

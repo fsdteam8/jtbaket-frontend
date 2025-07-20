@@ -1,16 +1,15 @@
-
 import React from "react";
-import LoginForm from "./_components/login-form";
 import AuthLayoutDesign from "../_components/auth-layout";
+import ForgotPasswordForm from "./_components/forgot-password-form";
 
-const LoginPage = () => {
+const ForgotPasswordPage = () => {
   return (
     <div>
       <AuthLayoutDesign>
-        <LoginForm />
+        <ForgotPasswordForm />
       </AuthLayoutDesign>
     </div>
   );
 };
 
-export default LoginPage;
+export default ForgotPasswordPage;

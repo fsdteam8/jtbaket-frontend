@@ -1,16 +1,15 @@
-
 import React from "react";
-import LoginForm from "./_components/login-form";
 import AuthLayoutDesign from "../_components/auth-layout";
+import ResetPasswordForm from "./_components/reset-password-form";
 
-const LoginPage = () => {
+const ResetPasswordPage = () => {
   return (
     <div>
       <AuthLayoutDesign>
-        <LoginForm />
+        <ResetPasswordForm />
       </AuthLayoutDesign>
     </div>
   );
 };
 
-export default LoginPage;
+export default ResetPasswordPage;
