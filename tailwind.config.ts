@@ -30,7 +30,7 @@ const config: Config = {
         },
       },
       fontFamily: {
-        sans: ["var(--font-manrope)", "sans-serif"],
+        manrope: ["var(--font-manrope)", "sans-serif"],
       },
       borderRadius: {
         lg: "var(--radius)",

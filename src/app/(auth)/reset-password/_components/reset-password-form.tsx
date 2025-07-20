@@ -16,6 +16,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Eye, EyeOff } from "lucide-react";
 import { useState } from "react";
+import SuccessfullyApprovedModal from "@/components/modals/sucessfully-approved-modal";
 
 const formSchema = z
   .object({
@@ -30,6 +31,7 @@ const formSchema = z
   });
 
 const ResetPasswordForm = () => {
+  const [isOpen, setIsOpen] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const form = useForm<z.infer<typeof formSchema>>({
@@ -156,6 +158,7 @@ const ResetPasswordForm = () => {
             />
 
             <Button
+              onClick={() => setIsOpen(true)}
               className="text-lg font-bold text-[#F8FAF9] leading-[120%] rounded-[32px] w-full h-[52px] bg-secondary shadow-[0px_4px_4px_0px_rgba(0, 0, 0, 0.15)]"
               type="submit"
             >
@@ -164,6 +167,15 @@ const ResetPasswordForm = () => {
           </form>
         </Form>
       </div>
+      {/* successfully modal  */}
+      {isOpen && (
+        <SuccessfullyApprovedModal
+          open={isOpen}
+          onOpenChange={() => setIsOpen(false)}
+          title="Password Changed Successfully"
+          desc="Your password has been updated successfully"
+        />
+      )}
     </div>
   );
 };

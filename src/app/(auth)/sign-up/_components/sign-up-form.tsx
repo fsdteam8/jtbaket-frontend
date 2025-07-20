@@ -19,6 +19,7 @@ import { useState } from "react";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import Link from "next/link";
+import SuccessfullyApprovedModal from "@/components/modals/sucessfully-approved-modal";
 
 const formSchema = z
   .object({
@@ -45,6 +46,7 @@ const formSchema = z
 const SignUpForm = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -295,6 +297,7 @@ const SignUpForm = () => {
             />
 
             <Button
+              onClick={() => setIsOpen(true)}
               className="text-lg font-bold text-[#F8FAF9] leading-[120%] rounded-[32px] w-full h-[52px] bg-secondary shadow-[0px_4px_4px_0px_rgba(0, 0, 0, 0.15)]"
               type="submit"
             >
@@ -302,13 +305,26 @@ const SignUpForm = () => {
             </Button>
             <p className="text-sm font-medium leading-[120%] text-[#363636] text-center ">
               Don’t have an account?
-              <Link href="/login" className="text-secondary pl-1 hover:underline">
+              <Link
+                href="/login"
+                className="text-secondary pl-1 hover:underline"
+              >
                 Log in
               </Link>{" "}
             </p>
           </form>
         </Form>
       </div>
+
+      {/* successfully modal  */}
+      {isOpen && (
+        <SuccessfullyApprovedModal
+          open={isOpen}
+          onOpenChange={() => setIsOpen(false)}
+          title="Successfully Approved Your Account"
+          desc="Your affiliate account has been approved"
+        />
+      )}
     </div>
   );
 };
