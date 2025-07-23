@@ -23,10 +23,10 @@ const config: Config = {
       },
       colors: {
         primary: {
-          DEFAULT: "#1F2937",
+          DEFAULT: "var(--primary)",
         },
         secondary: {
-          DEFAULT: "#04AF1E",
+          DEFAULT: "var(--secondary)",
         },
       },
       fontFamily: {
