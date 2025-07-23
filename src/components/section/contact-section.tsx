@@ -1,4 +1,5 @@
 import { Phone, Mail, MapPin } from "lucide-react"
+import Image from "next/image"
 
 export function ContactSection() {
   return (
@@ -12,7 +13,9 @@ export function ContactSection() {
 
         <div className="grid md:grid-cols-2 gap-12 items-center">
           <div className="flex justify-center">
-            <img
+            <Image
+            width={400}
+            height={400}
               src="/placeholder.svg?height=400&width=400"
               alt="Person working at desk"
               className="max-w-full h-auto"
