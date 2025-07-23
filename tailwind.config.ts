@@ -21,14 +21,14 @@ const config: Config = {
   				lg: '1170px'
   			}
   		},
-  		colors: {
-  			primary: {
-  				DEFAULT: '#1F2937'
-  			},
-  			secondary: {
-  				DEFAULT: '#04AF1E'
-  			}
-  		},
+  	 colors: {
+        primary: {
+          DEFAULT: "var(--primary)",
+        },
+        secondary: {
+          DEFAULT: "var(--secondary)",
+        },
+      },
   		fontFamily: {
   			manrope: [
   				'var(--font-manrope)',
