@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button"
 
 export function MissionSection() {
   return (
-    <section className="py-16 px-4">
+    <section className="py-16 px-4 bg-white">
       <div className="max-w-6xl mx-auto">
         <div className="text-center mb-12">
           <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-6">
