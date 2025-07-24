@@ -32,7 +32,7 @@ export default function RootLayout({
       <head>
         <style>{`:root { --primary: ${primaryColor}; }`}</style>
       </head>
-      <body className={`${manrope.variable} antialiased`}>
+      <body className={`${manrope.variable} antialiased bg-[#F8FEFF]`}>
         <Providers>
           <ThemeFetcher />
           {children}
