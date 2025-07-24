@@ -1,6 +1,5 @@
-import { Footer } from '@/components/footer'
-import { Navbar } from '@/components/navbar'
-import { ContactSection } from '@/components/section/contact-section'
+
+import FooterBannar from '@/components/footerBannar'
 import { HeroSection } from '@/components/section/hero-section'
 import { MissionSection } from '@/components/section/mission-section'
 // import { ClientThemeProvider } from '@/lib/client-theme-provider'
@@ -10,14 +9,16 @@ import React from 'react'
 const HomePage = () => {
   return (
     //  <ClientThemeProvider>
-      <div className="min-h-screen">
-        {/* <ColorFetcher /> */}
-        <Navbar />
-        <HeroSection />
-        <MissionSection />
-        <ContactSection />
-        <Footer />
+    <div className="min-h-screen">
+      {/* <ColorFetcher /> */}
+      <HeroSection />
+      <MissionSection />
+      <div className='bg-[#F2F9F2]'>
+        <div className='container'>
+          <FooterBannar />
+        </div>
       </div>
+    </div>
     // </ClientThemeProvider>
   )
 }

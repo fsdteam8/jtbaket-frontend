@@ -5,7 +5,7 @@ import React from 'react'
 const FooterBannar = () => {
     return (
         <div>
-            <div className="bg-[#F8FEFF] rounded-lg  p-6">
+            <div className=" rounded-lg  p-6">
                 <div className="text-center mb-6">
                     <h2 className="text-xl font-semibold mb-2">
                         Contact us to purchase your

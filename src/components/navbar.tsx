@@ -14,19 +14,19 @@ export function Navbar() {
             <Link href="/" className="hover:text-gray-200 border-b-2 border-white pb-1">
               Home
             </Link>
-            <Link href="/inventory" className="hover:text-gray-200">
+            <Link href="/Inventory" className="hover:text-gray-200">
               Inventory
             </Link>
             <Link href="/favorites" className="hover:text-gray-200">
               All Favorites
             </Link>
-            <Link href="/about" className="hover:text-gray-200">
+            <Link href="/about-us" className="hover:text-gray-200">
               About Us
             </Link>
-            <Link href="/faqs" className="hover:text-gray-200">
+            <Link href="/faq" className="hover:text-gray-200">
               FAQs
             </Link>
-            <Link href="/contact" className="hover:text-gray-200">
+            <Link href="/contact-us" className="hover:text-gray-200">
               Contact
             </Link>
           </div>
@@ -36,9 +36,11 @@ export function Navbar() {
             <User className="w-4 h-4 mr-2" />
             Your Account
           </Button>
-          <Button variant="ghost" size="sm" className="text-white hover:text-gray-200 hover:bg-white/10">
-            <Heart className="w-4 h-4" />
-          </Button>
+          <Link href="/favorites">
+            <Button variant="ghost" size="sm" className="text-white hover:text-gray-200 hover:bg-white/10">
+              <Heart className="w-4 h-4" />
+            </Button>
+          </Link>
         </div>
       </div>
     </nav>
