@@ -22,6 +22,8 @@ import BannerSection from "@/components/homeHeaders/BannerSection"
 import { toast } from "sonner"
 import { useMutation, useQuery } from "@tanstack/react-query"
 import { UserResponse } from "../../../../../types/UserDataType"
+import { signOut, useSession } from "next-auth/react"
+import AccountSkeleton from "./skeleton"
 
 const profileSchema = z.object({
     fullname: z.string().min(1, "Name is required"),
@@ -56,11 +58,13 @@ interface ProfileInfoComponentProps {
 }
 
 export default function ProfileInfoComponent({ setChange }: ProfileInfoComponentProps) {
+    const session = useSession();
+    const token = (session?.data?.user as { accessToken: string })?.accessToken;
+    const id = (session?.data?.user as { id: string })?.id;
+
     const [previewImage, setPreviewImage] = useState<string | null>(null)
     const fileInputRef = useRef<HTMLInputElement | null>(null)
     const [isEditing, setIsEditing] = useState(false)
-    const id = '6881f95e3aa70ad330507eff'
-    const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2ODgxZjk1ZTNhYTcwYWQzMzA1MDdlZmYiLCJyb2xlIjoiVVNFUiIsImlhdCI6MTc1MzM1NDgyMywiZXhwIjoxNzUzOTU5NjIzfQ.A83pd32mDzhqTWwUubhVfNZnoDIPLYVLNBtpALs0XXE'
 
     // Fetch user data
     const { data, isLoading } = useQuery<UserResponse>({
@@ -217,7 +221,7 @@ export default function ProfileInfoComponent({ setChange }: ProfileInfoComponent
     };
 
     if (isLoading) {
-        return <p>Loading...</p>;
+        <AccountSkeleton />
     }
 
     return (
@@ -242,7 +246,7 @@ export default function ProfileInfoComponent({ setChange }: ProfileInfoComponent
                                                     src={previewImage || "/placeholder.svg?height=80&width=80"}
                                                     alt="Profile"
                                                 />
-                                                <AvatarFallback>BE</AvatarFallback>
+                                                <AvatarFallback>{data?.data.name.slice(0,2)}</AvatarFallback>
                                             </Avatar>
                                         </div>
                                         <Input
@@ -256,16 +260,6 @@ export default function ProfileInfoComponent({ setChange }: ProfileInfoComponent
                                             className="hidden"
                                             disabled={!isEditing}
                                         />
-                                        {isEditing && (
-                                            <Button
-                                                type="button"
-                                                className="mt-2 text-white"
-                                                onClick={handleImageUpload}
-                                                disabled={imageUploadMutation.isPending}
-                                            >
-                                                {imageUploadMutation.isPending ? "Uploading..." : "Upload Image"}
-                                            </Button>
-                                        )}
                                     </div>
                                     <div>
                                         <h3 className="text-lg font-semibold text-[#131313]">{watch("fullname") || "No Name"}</h3>
@@ -276,6 +270,16 @@ export default function ProfileInfoComponent({ setChange }: ProfileInfoComponent
                                                 ? `${watch("country")}, ${watch("cityState")}`
                                                 : "No Address"}
                                         </p>
+                                        {isEditing && (
+                                            <Button
+                                                type="button"
+                                                className="mt-4 rounded-full text-white"
+                                                onClick={handleImageUpload}
+                                                disabled={imageUploadMutation.isPending}
+                                            >
+                                                {imageUploadMutation.isPending ? "Uploading..." : "Upload Image"}
+                                            </Button>
+                                        )}
                                     </div>
                                 </div>
                                 <div className="flex justify-between w-full">
@@ -288,7 +292,7 @@ export default function ProfileInfoComponent({ setChange }: ProfileInfoComponent
                                     </Button>
                                     <button
                                         type="button"
-                                        onClick={() => console.log("Logout clicked")}
+                                        onClick={() => signOut()}
                                         className="text-red-500 hover:text-red-600 text-sm font-medium"
                                     >
                                         Log out
