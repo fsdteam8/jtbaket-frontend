@@ -1,16 +1,20 @@
 "use client"
 
 import { useState } from "react"
+import { useMutation } from "@tanstack/react-query"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { ArrowBigLeft, Eye, EyeOff } from "lucide-react"
 import BannerSection from "@/components/homeHeaders/BannerSection"
+import { toast } from "sonner"
 
 interface ProfileInfoComponentProps {
     setChange: React.Dispatch<React.SetStateAction<boolean>>;
 }
+
 export default function PasswordChangeComponent({ setChange }: ProfileInfoComponentProps) {
+    const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2ODgxZjk1ZTNhYTcwYWQzMzA1MDdlZmYiLCJyb2xlIjoiVVNFUiIsImlhdCI6MTc1MzM0ODgzMSwiZXhwIjoxNzUzOTUzNjMxfQ.fp-mbJu4x9d4Xvjhvac1AZTOGm2z7sKiWHNHTDd63sU'
     const [formData, setFormData] = useState({
         currentPassword: "",
         newPassword: "",
@@ -26,13 +30,6 @@ export default function PasswordChangeComponent({ setChange }: ProfileInfoCompon
     const handleInputChange = (field: string, value: string) => {
         const updatedData = { ...formData, [field]: value }
         setFormData(updatedData)
-        console.log(`${field} changed`)
-        console.log("Password form data:", {
-            currentPasswordLength: updatedData.currentPassword.length,
-            newPasswordLength: updatedData.newPassword.length,
-            confirmPasswordLength: updatedData.confirmPassword.length,
-            passwordsMatch: updatedData.newPassword === updatedData.confirmPassword,
-        })
     }
 
     const togglePasswordVisibility = (field: string) => {
@@ -40,44 +37,77 @@ export default function PasswordChangeComponent({ setChange }: ProfileInfoCompon
             ...prev,
             [field]: !prev[field as keyof typeof prev],
         }))
-        console.log(`Toggled ${field} password visibility`)
     }
 
+    const changePasswordMutation = useMutation({
+        mutationFn: async (data: { oldPassword: string; newPassword: string }) => {
+
+            const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/auth/change-password`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`,
+                },
+                body: JSON.stringify({
+                    oldPassword: data.oldPassword,
+                    newPassword: data.newPassword,
+                }),
+            })
+
+            if (!res.ok) {
+                const errorData = await res.json()
+                throw new Error(errorData.error || "Password change failed")
+            }
+
+            return res.json()
+        },
+        onSuccess: (data) => {
+            console.log("Password changed successfully", data)
+            toast.success(data.message)
+        },
+        onError: (error) => {
+            // console.error("Password change failed", error.)
+            toast.error(error.message || "Password change failed")
+        },
+    })
+
     const handleSave = () => {
-        console.log("Save password button clicked")
-        console.log("Password change data:", {
-            currentPasswordProvided: formData.currentPassword.length > 0,
-            newPasswordProvided: formData.newPassword.length > 0,
-            confirmPasswordProvided: formData.confirmPassword.length > 0,
-            passwordsMatch: formData.newPassword === formData.confirmPassword,
-            newPasswordLength: formData.newPassword.length,
+        if (formData.newPassword !== formData.confirmPassword) {
+            alert("New password and confirm password do not match")
+            return
+        }
+
+        changePasswordMutation.mutate({
+            oldPassword: formData.currentPassword,
+            newPassword: formData.newPassword,
         })
     }
 
     const handleLogout = () => {
         console.log("Logout clicked from password change")
+        // logout logic here
     }
 
     return (
         <div>
-            <BannerSection image={'/password.jpg'} />
-            <div className="min-h-screen   py-8">
+            <BannerSection image={"/password.jpg"} />
+            <div className="min-h-screen py-8">
                 <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-                    <div className=" rounded-lg shadow-sm p-6">
+                    <div className="rounded-lg shadow-sm p-6">
                         <h1 className="text-2xl font-semibold text-center mb-8">My Profile</h1>
 
                         <div className="mb-6">
                             <div className="flex justify-between">
                                 <h2 className="text-lg font-medium mb-6">Change Password</h2>
-                                <Button className="text-white" onClick={() => setChange(false)}><ArrowBigLeft /> Back</Button>
+                                <Button className="text-white" onClick={() => setChange(false)}>
+                                    <ArrowBigLeft className="mr-2 h-4 w-4" /> Back
+                                </Button>
                             </div>
 
                             <div className="space-y-4">
                                 {/* Current Password */}
                                 <div>
-                                    <Label htmlFor="currentPassword" className="text-sm font-medium text-gray-700">
-                                        Current Password
-                                    </Label>
+                                    <Label htmlFor="currentPassword">Current Password</Label>
                                     <div className="relative mt-1">
                                         <Input
                                             id="currentPassword"
@@ -102,9 +132,7 @@ export default function PasswordChangeComponent({ setChange }: ProfileInfoCompon
 
                                 {/* New Password */}
                                 <div>
-                                    <Label htmlFor="newPassword" className="text-sm font-medium text-gray-700">
-                                        New Password
-                                    </Label>
+                                    <Label htmlFor="newPassword">New Password</Label>
                                     <div className="relative mt-1">
                                         <Input
                                             id="newPassword"
@@ -127,11 +155,9 @@ export default function PasswordChangeComponent({ setChange }: ProfileInfoCompon
                                     </div>
                                 </div>
 
-                                {/* Confirm New Password */}
+                                {/* Confirm Password */}
                                 <div>
-                                    <Label htmlFor="confirmPassword" className="text-sm font-medium text-gray-700">
-                                        Confirm New Password
-                                    </Label>
+                                    <Label htmlFor="confirmPassword">Confirm New Password</Label>
                                     <div className="relative mt-1">
                                         <Input
                                             id="confirmPassword"
@@ -158,10 +184,17 @@ export default function PasswordChangeComponent({ setChange }: ProfileInfoCompon
 
                         {/* Action Buttons */}
                         <div className="flex justify-between items-center">
-                            <Button onClick={handleSave} className="bg-green-500 hover:bg-green-600 text-white px-6 py-2 rounded-md">
-                                Save
+                            <Button
+                                onClick={handleSave}
+                                disabled={changePasswordMutation.isPending}
+                                className="bg-green-500 hover:bg-green-600 text-white px-6 py-2 rounded-md"
+                            >
+                                {changePasswordMutation.isPending ? "Saving..." : "Save"}
                             </Button>
-                            <button onClick={handleLogout} className="text-red-500 hover:text-red-600 text-sm font-medium">
+                            <button
+                                onClick={handleLogout}
+                                className="text-red-500 hover:text-red-600 text-sm font-medium"
+                            >
                                 Log out
                             </button>
                         </div>
@@ -169,6 +202,5 @@ export default function PasswordChangeComponent({ setChange }: ProfileInfoCompon
                 </div>
             </div>
         </div>
-
     )
 }

@@ -6,12 +6,12 @@ import {
 import * as z from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
 
-import { useState, useRef } from "react"
+import { useState, useRef, useEffect } from "react"
 
 import { Label } from "@/components/ui/label"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
-import { Textarea } from "@/components/ui/textarea"
+// import { Textarea } from "@/components/ui/textarea"
 import {
     Avatar,
     AvatarFallback,
@@ -19,21 +19,37 @@ import {
 } from "@/components/ui/avatar"
 import FooterBannar from "@/components/footerBannar"
 import BannerSection from "@/components/homeHeaders/BannerSection"
+import { toast } from "sonner"
+import { useMutation, useQuery } from "@tanstack/react-query"
+import { UserResponse } from "../../../../../types/UserDataType"
 
 const profileSchema = z.object({
-    firstName: z.string().min(1, "First Name is required"),
-    lastName: z.string().min(1, "Last Name is required"),
+    fullname: z.string().min(1, "Name is required"),
     email: z.string().email("Invalid email"),
     phone: z.string().min(6, "Invalid phone number"),
     country: z.string().min(1, "Country is required"),
     cityState: z.string().min(1, "City/State is required"),
-    business: z.string().optional(),
+    // business: z.string().optional(),
     postalCode: z.string().min(4, "Postal Code is required"),
     taxId: z.string().min(4, "Tax ID is required"),
     image: z.any().optional(),
 })
 
 type ProfileFormData = z.infer<typeof profileSchema>
+
+type ProfilePayload = {
+    name: string;
+    email: string;
+    phone: string;
+    // bio: string;
+    address: {
+        country: string;
+        cityState: string;
+        postalCode: string;
+        taxId: string;
+    };
+};
+
 
 interface ProfileInfoComponentProps {
     setChange: React.Dispatch<React.SetStateAction<boolean>>;
@@ -43,49 +59,165 @@ export default function ProfileInfoComponent({ setChange }: ProfileInfoComponent
     const [previewImage, setPreviewImage] = useState<string | null>(null)
     const fileInputRef = useRef<HTMLInputElement | null>(null)
     const [isEditing, setIsEditing] = useState(false)
+    const id = '6881f95e3aa70ad330507eff'
+    const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2ODgxZjk1ZTNhYTcwYWQzMzA1MDdlZmYiLCJyb2xlIjoiVVNFUiIsImlhdCI6MTc1MzM1NDgyMywiZXhwIjoxNzUzOTU5NjIzfQ.A83pd32mDzhqTWwUubhVfNZnoDIPLYVLNBtpALs0XXE'
 
+    // Fetch user data
+    const { data, isLoading } = useQuery<UserResponse>({
+        queryKey: ["me"],
+        queryFn: async () => {
+            const res = await fetch(
+                `${process.env.NEXT_PUBLIC_BASE_URL}/user/${id}`,
+                {
+                    headers: {
+                        "Content-Type": "application/json",
+                        Authorization: `Bearer ${token}`,
+                    },
+                }
+            );
+            if (!res.ok) throw new Error("Failed to fetch user");
+            return res.json();
+        },
+    });
+
+    // Initialize form with fetched data once it's loaded
     const {
         register,
         handleSubmit,
         watch,
+        reset,
         formState: { errors }
     } = useForm<ProfileFormData>({
         resolver: zodResolver(profileSchema),
         defaultValues: {
-            firstName: "Bessie",
-            lastName: "Edwards",
-            email: "bessie.edwards@example.com",
-            phone: "+1 (555) 000-0000",
+            fullname: "",
+            email: "",
+            phone: "",
             country: "",
             cityState: "",
-            business: "",
+            // business: "",
             postalCode: "",
             taxId: "",
         },
     })
 
-    const onSubmit = (data: ProfileFormData) => {
-        console.log("Form submitted with:", data)
-        setIsEditing(false)  // Disable inputs after save
-    }
-
-    const handleLogout = () => {
-        console.log("Logout clicked")
-    }
-
-    const imageFile = watch("image")?.[0]
-    if (imageFile && typeof window !== "undefined") {
-        const reader = new FileReader()
-        reader.onloadend = () => {
-            setPreviewImage(reader.result as string)
+    // When data arrives, reset form values and set preview image
+    useEffect(() => {
+        if (data && data.data) {
+            const user = data.data;
+            reset({
+                fullname: user.name || "",
+                email: user.email || "",
+                phone: user.phone || "",
+                country: user.address?.country || "",
+                cityState: user.address?.cityState || "",
+                // business: user.bio || "", // assuming bio maps to business here
+                postalCode: user.address?.postalCode || "",
+                taxId: user.address?.taxId || "",
+            })
+            setPreviewImage(user.profileImage || null);
         }
-        reader.readAsDataURL(imageFile)
-    }
+    }, [data, reset])
+
+    const profileMutation = useMutation<UserResponse, Error, ProfilePayload>({
+        mutationFn: async (data) => {
+            const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/user/${id}`, {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`,
+                },
+                body: JSON.stringify(data),
+            });
+
+            const resData = await response.json();
+            if (!response.ok) {
+                throw new Error(resData.message || "Failed to update profile");
+            }
+            return resData;
+        },
+        onSuccess: () => {
+            toast.success("Profile updated successfully");
+            setIsEditing(false);
+        },
+        onError: (error) => {
+            toast.error(error.message || "Something went wrong");
+        },
+    });
+
+    const imageUploadMutation = useMutation({
+        mutationFn: async (imageFile: File) => {
+            const formData = new FormData();
+            formData.append("profileImage", imageFile);
+
+            const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/user/upload-avatar/${id}`, {
+                method: "POST",
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+                body: formData,
+            });
+
+            const data = await response.json();
+            if (!response.ok) {
+                throw new Error(data.message || "Failed to upload image");
+            }
+
+            return data;
+        },
+        onSuccess: () => {
+            toast.success("Profile image updated successfully");
+        },
+        onError: (error) => {
+            toast.error(error.message || "Image upload failed");
+        },
+    });
+
+    const onSubmit = (data: ProfileFormData) => {
+        const payload = {
+            name: data.fullname,
+            email: data.email,
+            phone: data.phone,
+            // bio: data.business || "",
+            address: {
+                country: data.country,
+                cityState: data.cityState,
+                postalCode: data.postalCode,
+                taxId: data.taxId,
+            },
+        };
+
+        profileMutation.mutate(payload);
+    };
+
+    const handleImageUpload = () => {
+        const file = watch("image")?.[0];
+        if (file) {
+            imageUploadMutation.mutate(file);
+        } else {
+            toast.error("Please select an image first.");
+        }
+    };
+
+    const imageFile = watch("image")?.[0];
+    useEffect(() => {
+        if (imageFile) {
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                setPreviewImage(reader.result as string);
+            };
+            reader.readAsDataURL(imageFile);
+        }
+    }, [imageFile]);
 
     const handleAvatarClick = () => {
         if (isEditing) {
-            fileInputRef.current?.click()
+            fileInputRef.current?.click();
         }
+    };
+
+    if (isLoading) {
+        return <p>Loading...</p>;
     }
 
     return (
@@ -94,10 +226,9 @@ export default function ProfileInfoComponent({ setChange }: ProfileInfoComponent
             <div className="min-h-screen bg-[#F8FEFF] py-8">
                 <div className="container mx-auto px-4 sm:px-6 lg:px-8">
                     <form onSubmit={handleSubmit(onSubmit)}>
-                        <div className=" rounded-lg shadow-sm p-6 mb-6">
+                        <div className="rounded-lg shadow-sm p-6 mb-6">
                             <h1 className="text-2xl font-semibold text-center mb-6">My Profile</h1>
 
-                            {/* Profile Image Upload with Avatar */}
                             <div className="flex flex-col items-start gap-[24px] mb-[42px] ">
                                 <h2 className="text-lg font-medium mb-4">Personal Information</h2>
                                 <div className="flex items-center gap-6">
@@ -119,30 +250,45 @@ export default function ProfileInfoComponent({ setChange }: ProfileInfoComponent
                                             accept="image/*"
                                             {...register("image")}
                                             ref={(e) => {
-                                                register("image").ref(e)
-                                                fileInputRef.current = e
+                                                register("image").ref(e);
+                                                fileInputRef.current = e;
                                             }}
                                             className="hidden"
                                             disabled={!isEditing}
                                         />
+                                        {isEditing && (
+                                            <Button
+                                                type="button"
+                                                className="mt-2 text-white"
+                                                onClick={handleImageUpload}
+                                                disabled={imageUploadMutation.isPending}
+                                            >
+                                                {imageUploadMutation.isPending ? "Uploading..." : "Upload Image"}
+                                            </Button>
+                                        )}
                                     </div>
                                     <div>
-                                        <h3 className="text-lg font-semibold text-[#131313]">Bessie Edwards</h3>
-                                        <p className="text-sm text-[#424242] mb-2">bessie.edwards@example.com</p>
-                                        <p className="text-sm text-[#424242]">3891 Ranchview Dr. Richardson, California 62639</p>
+                                        <h3 className="text-lg font-semibold text-[#131313]">{watch("fullname") || "No Name"}</h3>
+                                        <p className="text-sm text-[#424242] mb-2">{watch("email") || "No Email"}</p>
+                                        <p className="text-sm text-[#424242]">
+                                            {watch("phone") || "No Phone"}<br />
+                                            {watch("country") && watch("cityState")
+                                                ? `${watch("country")}, ${watch("cityState")}`
+                                                : "No Address"}
+                                        </p>
                                     </div>
                                 </div>
-                                {/* Only show Save button when editing */}
                                 <div className="flex justify-between w-full">
                                     <Button
                                         type="submit"
                                         className="bg-primary flex hover:bg-primary/90 text-white px-6 py-2 rounded-full"
+                                        disabled={!isEditing || profileMutation.isPending}
                                     >
-                                        Save
+                                        {profileMutation.isPending ? "Saving..." : "Save"}
                                     </Button>
                                     <button
                                         type="button"
-                                        onClick={handleLogout}
+                                        onClick={() => console.log("Logout clicked")}
                                         className="text-red-500 hover:text-red-600 text-sm font-medium"
                                     >
                                         Log out
@@ -150,18 +296,12 @@ export default function ProfileInfoComponent({ setChange }: ProfileInfoComponent
                                 </div>
                             </div>
 
-                            {/* Input Fields */}
                             <div className="space-y-4">
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div className="grid grid-cols-1 md:grid-cols-1 gap-4">
                                     <div>
-                                        <Label htmlFor="firstName">First Name</Label>
-                                        <Input id="firstName" {...register("firstName")} disabled={!isEditing} />
-                                        {errors.firstName && <p className="text-sm text-red-500">{errors.firstName.message}</p>}
-                                    </div>
-                                    <div>
-                                        <Label htmlFor="lastName">Last Name</Label>
-                                        <Input id="lastName" {...register("lastName")} disabled={!isEditing} />
-                                        {errors.lastName && <p className="text-sm text-red-500">{errors.lastName.message}</p>}
+                                        <Label htmlFor="fullname">Full Name</Label>
+                                        <Input id="fullname" {...register("fullname")} disabled={!isEditing} />
+                                        {errors.fullname && <p className="text-sm text-red-500">{errors.fullname.message}</p>}
                                     </div>
                                 </div>
 
@@ -191,7 +331,7 @@ export default function ProfileInfoComponent({ setChange }: ProfileInfoComponent
                                     </div>
                                 </div>
 
-                                <div>
+                                {/* <div>
                                     <Label htmlFor="business">Business</Label>
                                     <Textarea
                                         id="business"
@@ -200,7 +340,7 @@ export default function ProfileInfoComponent({ setChange }: ProfileInfoComponent
                                         className="min-h-[80px]"
                                         disabled={!isEditing}
                                     />
-                                </div>
+                                </div> */}
 
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                     <div>
@@ -216,13 +356,13 @@ export default function ProfileInfoComponent({ setChange }: ProfileInfoComponent
                                 </div>
                             </div>
 
-                            {/* Buttons */}
                             <div className="flex justify-between items-center mt-6">
                                 <div className="flex justify-between w-full items-center">
                                     <Button
                                         type="button"
                                         onClick={() => setIsEditing(true)}
                                         className="bg-primary hover:bg-primary/90 text-white px-6 py-2 rounded-full"
+                                        disabled={isEditing}
                                     >
                                         Edit
                                     </Button>
@@ -239,11 +379,9 @@ export default function ProfileInfoComponent({ setChange }: ProfileInfoComponent
                         </div>
                     </form>
 
-                    {/* Contact Section */}
                     <FooterBannar />
                 </div>
             </div>
         </div>
-
     )
 }
