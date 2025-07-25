@@ -19,6 +19,9 @@ import { useState } from "react";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import Link from "next/link";
+import { signIn } from "next-auth/react";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
 const formSchema = z.object({
   email: z.string().email({
@@ -31,6 +34,7 @@ const formSchema = z.object({
 });
 
 const LoginForm = () => {
+  const router = useRouter()
   const [showPassword, setShowPassword] = useState(false);
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -42,8 +46,22 @@ const LoginForm = () => {
   });
 
   // 2. Define a submit handler.
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log(values);
+  async function onSubmit(values: z.infer<typeof formSchema>) {
+    try {
+      const res = await signIn("credentials", {
+        email: values?.email,
+        password: values?.password,
+        redirect: false,
+      });
+      if (res?.error) {
+        throw new Error(res.error);
+      }
+      toast.success("Login successful");
+      router.push("/");
+    } catch (error) {
+      console.log(error);
+      toast.error((error as Error).message);
+    }
   }
   return (
     <div>
@@ -168,7 +186,7 @@ const LoginForm = () => {
             />
 
             <Button
-              className="text-lg font-bold text-[#F8FAF9] leading-[120%] rounded-[32px] w-full h-[52px] bg-secondary shadow-[0px_4px_4px_0px_rgba(0, 0, 0, 0.15)]"
+              className="text-lg font-bold text-[#F8FAF9] leading-[120%] rounded-full bg-primary hover:bg-primary/30 w-full h-[52px]  shadow-[0px_4px_4px_0px_rgba(0, 0, 0, 0.15)]"
               type="submit"
             >
               Sign In

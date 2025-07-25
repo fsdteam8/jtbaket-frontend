@@ -7,6 +7,7 @@ import { Providers } from "@/lib/providers"
 // import { ThemeFetcher } from "@/lib/ThemeFetcher"
 import { Manrope } from "next/font/google"
 import { cookies } from "next/headers"
+import AuthProvider from "@/components/provider/AuthProvider"
 
 const manrope = Manrope({
   subsets: ["latin"],
@@ -33,11 +34,13 @@ export default function RootLayout({
         <style>{`:root { --primary: ${primaryColor}; }`}</style>
       </head>
       <body className={`${manrope.variable} antialiased`}>
-        <Providers>
-          <ThemeFetcher />
-          {children}
-          <Toaster />
-        </Providers>
+        <AuthProvider>
+          <Providers>
+            <ThemeFetcher />
+            {children}
+            <Toaster />
+          </Providers>
+        </AuthProvider>
       </body>
     </html>
   )
