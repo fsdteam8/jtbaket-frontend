@@ -1,179 +1,71 @@
 "use client"
 
-import { useState, useEffect } from "react"
 import Image from "next/image"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { ArrowLeft, Trash2 } from "lucide-react"
-
-interface Product {
-  id: string
-  name: string
-  productId: string
-  quantity: number
-  type: string
-  price: number
-  image: string
-  description: string
-}
-
-const allProducts: Product[] = [
-  {
-    id: "1",
-    name: "Lemon Cherry",
-    productId: "#253478",
-    quantity: 1000,
-    type: "Indoor",
-    price: 31000,
-    image: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/image-pKGQNqWgQZwqMBAtftHqxkfXyVOGl8.png",
-    description:
-      "A product catalog platform where users register to browse and inquire about products. Access to full features.",
-  },
-  {
-    id: "2",
-    name: "Lemon Cherry",
-    productId: "#253479",
-    quantity: 1500,
-    type: "Indoor",
-    price: 32000,
-    image: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/image-pKGQNqWgQZwqMBAtftHqxkfXyVOGl8.png",
-    description:
-      "A product catalog platform where users register to browse and inquire about products. Access to full features.",
-  },
-  {
-    id: "3",
-    name: "Lemon Cherry",
-    productId: "#253480",
-    quantity: 800,
-    type: "Indoor",
-    price: 29000,
-    image: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/image-pKGQNqWgQZwqMBAtftHqxkfXyVOGl8.png",
-    description:
-      "A product catalog platform where users register to browse and inquire about products. Access to full features.",
-  },
-  {
-    id: "4",
-    name: "Lemon Cherry",
-    productId: "#253481",
-    quantity: 1200,
-    type: "Indoor",
-    price: 33000,
-    image: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/image-pKGQNqWgQZwqMBAtftHqxkfXyVOGl8.png",
-    description:
-      "A product catalog platform where users register to browse and inquire about products. Access to full features.",
-  },
-  {
-    id: "5",
-    name: "Lemon Cherry",
-    productId: "#253482",
-    quantity: 900,
-    type: "Indoor",
-    price: 30000,
-    image: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/image-pKGQNqWgQZwqMBAtftHqxkfXyVOGl8.png",
-    description:
-      "A product catalog platform where users register to browse and inquire about products. Access to full features.",
-  },
-  {
-    id: "6",
-    name: "Lemon Cherry",
-    productId: "#253483",
-    quantity: 1100,
-    type: "Indoor",
-    price: 31500,
-    image: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/image-pKGQNqWgQZwqMBAtftHqxkfXyVOGl8.png",
-    description:
-      "A product catalog platform where users register to browse and inquire about products. Access to full features.",
-  },
-  {
-    id: "7",
-    name: "Lemon Cherry",
-    productId: "#253484",
-    quantity: 750,
-    type: "Indoor",
-    price: 28000,
-    image: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/image-pKGQNqWgQZwqMBAtftHqxkfXyVOGl8.png",
-    description:
-      "A product catalog platform where users register to browse and inquire about products. Access to full features.",
-  },
-  {
-    id: "8",
-    name: "Lemon Cherry",
-    productId: "#253485",
-    quantity: 1300,
-    type: "Indoor",
-    price: 34000,
-    image: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/image-pKGQNqWgQZwqMBAtftHqxkfXyVOGl8.png",
-    description:
-      "A product catalog platform where users register to browse and inquire about products. Access to full features.",
-  },
-  {
-    id: "9",
-    name: "Lemon Cherry",
-    productId: "#253486",
-    quantity: 950,
-    type: "Indoor",
-    price: 30500,
-    image: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/image-pKGQNqWgQZwqMBAtftHqxkfXyVOGl8.png",
-    description:
-      "A product catalog platform where users register to browse and inquire about products. Access to full features.",
-  },
-  {
-    id: "10",
-    name: "Lemon Cherry",
-    productId: "#253487",
-    quantity: 1050,
-    type: "Indoor",
-    price: 31200,
-    image: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/image-pKGQNqWgQZwqMBAtftHqxkfXyVOGl8.png",
-    description:
-      "A product catalog platform where users register to browse and inquire about products. Access to full features.",
-  },
-  {
-    id: "11",
-    name: "Lemon Cherry",
-    productId: "#253488",
-    quantity: 850,
-    type: "Indoor",
-    price: 29500,
-    image: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/image-pKGQNqWgQZwqMBAtftHqxkfXyVOGl8.png",
-    description:
-      "A product catalog platform where users register to browse and inquire about products. Access to full features.",
-  },
-  {
-    id: "12",
-    name: "Lemon Cherry",
-    productId: "#253489",
-    quantity: 1150,
-    type: "Indoor",
-    price: 32500,
-    image: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/image-pKGQNqWgQZwqMBAtftHqxkfXyVOGl8.png",
-    description:
-      "A product catalog platform where users register to browse and inquire about products. Access to full features.",
-  },
-]
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
+import { useSession } from "next-auth/react"
+import { FavoriteProductsResponse } from "../../../../../types/FavoriteProductsDataType"
+import { toast } from "sonner"
+import { Skeleton } from "@/components/ui/skeleton"
+import { useState } from "react"
 
 export default function FavoritesPage() {
-  const [favorites, setFavorites] = useState<string[]>([])
-  const [favoriteProducts, setFavoriteProducts] = useState<Product[]>([])
+  const session = useSession()
+  const [isLoadingDelete, setIsLoading] = useState<string>('');
 
-  useEffect(() => {
-    const savedFavorites = localStorage.getItem("favorites")
-    if (savedFavorites) {
-      const favoriteIds = JSON.parse(savedFavorites)
-      setFavorites(favoriteIds)
-      const filteredProducts = allProducts.filter((product) => favoriteIds.includes(product.id))
-      setFavoriteProducts(filteredProducts)
-    }
-  }, [])
+  const token = (session?.data?.user as { accessToken: string })?.accessToken
+  const queryClient = useQueryClient()
+  const {
+    data: myFavorites,
+    isLoading,
+  } = useQuery<FavoriteProductsResponse>({
+    queryKey: ["getMyFavorites"],
+    queryFn: async () => {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/favorite/my`, {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      })
+      if (!res.ok) throw new Error("Failed to fetch favorites")
+      return res.json()
+    },
+  })
 
-  const removeFromFavorites = (productId: string) => {
-    const updatedFavorites = favorites.filter((id) => id !== productId)
-    setFavorites(updatedFavorites)
-    localStorage.setItem("favorites", JSON.stringify(updatedFavorites))
+  const removeToFavoritesMutation = useMutation({
+    mutationFn: async (id: string) => {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/favorite/${id}`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      })
 
-    const updatedProducts = favoriteProducts.filter((product) => product.id !== productId)
-    setFavoriteProducts(updatedProducts)
+      const resData = await response.json()
+      if (!response.ok) {
+        throw new Error(resData.message || "Failed to remove from favorites")
+      }
+      return resData
+    },
+    onSuccess: (success) => {
+      toast.success(success.message)
+      queryClient.invalidateQueries({ queryKey: ["getMyFavorites"] })
+    },
+    onError: (error) => {
+      toast.error(error.message || "Something went wrong")
+    },
+  })
+
+  const removeFromFavorites = (id: string) => {
+    setIsLoading(id)
+    removeToFavoritesMutation.mutate(id)
+  }
+  if (myFavorites?.data?.length === 0) {
+
   }
 
   return (
@@ -188,14 +80,35 @@ export default function FavoritesPage() {
           </Link>
         </div>
 
-        <div className="text-center mb-8">
-          <h1 className="text-2xl font-semibold text-gray-900 mb-2">My Favorites</h1>
-          <p className="text-gray-600">
-            Here are the products you&apoch;ve saved. You can remove items or contact us to learn more.
-          </p>
-        </div>
+        {(myFavorites && myFavorites?.data?.length > 0) && (
+          <div className="text-center mb-8">
+            <h1 className="text-2xl font-semibold text-gray-900 mb-2">My Favorites</h1>
+            <p className="text-gray-600">
+              Here are the products you&apos;ve saved. You can remove items or contact us to learn more.
+            </p>
+          </div>
+        )}
 
-        {favoriteProducts.length === 0 ? (
+        {isLoading ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-2 gap-6">
+            {Array.from({ length: 4 }).map((_, i) => (
+              <Card key={i}>
+                <CardContent className="p-0">
+                  <div className="flex">
+                    <Skeleton className="w-32 h-32" />
+                    <div className="flex-1 p-4 space-y-3">
+                      <Skeleton className="h-4 w-3/4" />
+                      <Skeleton className="h-3 w-full" />
+                      <Skeleton className="h-3 w-1/2" />
+                      <Skeleton className="h-3 w-2/3" />
+                      <Skeleton className="h-10 w-full rounded-md" />
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        ) : myFavorites?.data?.length === 0 ? (
           <div className="text-center py-12">
             <div className="text-gray-400 mb-4">
               <svg className="w-16 h-16 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -210,44 +123,45 @@ export default function FavoritesPage() {
             <h3 className="text-lg font-medium text-gray-900 mb-2">No favorites yet</h3>
             <p className="text-gray-600 mb-4">Start browsing products and add them to your favorites!</p>
             <Link href="/">
-              <Button className="bg-green-600 hover:bg-green-700">Browse Products</Button>
+              <Button className="bg-primary text-white">Browse Products</Button>
             </Link>
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-2 gap-6">
-            {favoriteProducts.map((product) => (
-              <Card key={product.id} className="overflow-hidden hover:shadow-lg transition-shadow">
+            {myFavorites?.data?.map((product) => (
+              <Card key={product._id} className="overflow-hidden border-none shadow-none  transition-shadow">
                 <CardContent className="p-0">
-                  <div className="flex">
-                    <div className="w-32 h-32 flex-shrink-0">
+                  <div className="flex ">
+                    <div className="w-[296px] h-[375px] flex-shrink-0 p-4 shadow-lg rounded-lg">
                       <Image
-                        src="/placeholder.svg?height=128&width=128"
-                        alt={product.name}
-                        width={128}
-                        height={128}
+                        src={product?.product?.thumbnail}
+                        alt={product?.product?._id}
+                        width={900}
+                        height={900}
                         className="w-full h-full object-cover"
                       />
                     </div>
                     <div className="flex-1 p-4">
                       <div className="flex justify-between items-start mb-2">
-                        <h3 className="font-semibold text-gray-900">{product.name}</h3>
+                        <h3 className="font-semibold text-gray-900">{product?.product?.name}</h3>
                       </div>
                       <div className="space-y-1 text-sm text-gray-600 mb-3">
                         <div>
-                          Product ID: <span className="text-blue-600">{product.productId}</span>
+                          Product ID: <span className="text-blue-600">{product?.product?._id}</span>
                         </div>
-                        <div>Quantity: {product.quantity}</div>
-                        <div>Type: {product.type}</div>
-                        <div className="font-semibold text-green-600">Price: ₹{product.price.toLocaleString()}</div>
+                        <div>Quantity: {product?.product?.quantity}</div>
+                        <div>Type: {product?.product?.type}</div>
+                        <div className="font-semibold text-green-600">Price: ₹{product?.product?.price?.toLocaleString()}</div>
                       </div>
-                      <p className="text-xs text-gray-500 mb-3 line-clamp-3">{product.description}</p>
+                      <p className="text-xs text-gray-500 mb-3 line-clamp-3">{product?.product?.description}</p>
                       <Button
-                        onClick={() => removeFromFavorites(product.id)}
+                        onClick={() => removeFromFavorites(product.product._id)}
+                        disabled={isLoadingDelete === product.product._id}
                         variant="destructive"
-                        className="w-full bg-red-600 hover:bg-red-700 text-white text-sm py-2 flex items-center justify-center gap-2"
+                        className="w-full bg-transparent border border-[#FF3333] rounded-full hover:bg-[#FF3333] text-red-500 hover:text-white text-sm py-2 flex items-center justify-center gap-2"
                       >
                         <Trash2 className="w-4 h-4" />
-                        Remove
+                        {isLoadingDelete === product?.product?._id ? "Remove..." : "Remove"}
                       </Button>
                     </div>
                   </div>

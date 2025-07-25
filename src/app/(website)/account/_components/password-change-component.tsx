@@ -8,13 +8,16 @@ import { Label } from "@/components/ui/label"
 import { ArrowBigLeft, Eye, EyeOff } from "lucide-react"
 import BannerSection from "@/components/homeHeaders/BannerSection"
 import { toast } from "sonner"
+import { useSession } from "next-auth/react"
 
 interface ProfileInfoComponentProps {
     setChange: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 export default function PasswordChangeComponent({ setChange }: ProfileInfoComponentProps) {
-    const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2ODgxZjk1ZTNhYTcwYWQzMzA1MDdlZmYiLCJyb2xlIjoiVVNFUiIsImlhdCI6MTc1MzM0ODgzMSwiZXhwIjoxNzUzOTUzNjMxfQ.fp-mbJu4x9d4Xvjhvac1AZTOGm2z7sKiWHNHTDd63sU'
+    const session = useSession();
+    const token = (session?.data?.user as { accessToken: string })?.accessToken;
+
     const [formData, setFormData] = useState({
         currentPassword: "",
         newPassword: "",

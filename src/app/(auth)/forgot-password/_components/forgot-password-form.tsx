@@ -15,6 +15,9 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import Link from "next/link";
+import { useMutation } from "@tanstack/react-query";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
 const formSchema = z.object({
   email: z.string().email({
@@ -23,6 +26,7 @@ const formSchema = z.object({
 });
 
 const ForgotPasswordForm = () => {
+  const route = useRouter();
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -30,10 +34,45 @@ const ForgotPasswordForm = () => {
     },
   });
 
+  const forgotPassMutation = useMutation({
+    mutationFn: async (bodyData: { email: string }) => {
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_BASE_URL}/auth/forget-password`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            // Authorization: `Bearer ${TOKEN}`,
+          },
+          body: JSON.stringify(bodyData),
+        }
+      );
+
+      if (!res.ok) {
+        const errorData = await res.json();
+        throw new Error(errorData.message || "Something went wrong");
+      }
+
+      return res.json(); // returns response data
+    },
+
+    onSuccess: (data, variables) => {
+      toast.success(data?.message);
+      route.push(`/otp?email=${encodeURIComponent(variables.email)}`);
+    },
+
+    onError: (error: Error) => {
+      toast.error(error.message);
+    },
+  });
+
+
+
   // 2. Define a submit handler.
   function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log(values);
+    forgotPassMutation.mutate(values)
   }
+
   return (
     <div>
       <div className="w-[547px] p-6 md:p-7 lg:p-8 rounded-[16px] bg-white shadow-[0px_0px_4px_rgba(0,0,0,0.10)]">
@@ -85,10 +124,10 @@ const ForgotPasswordForm = () => {
             />
 
             <Button
-              className="text-lg font-bold text-[#F8FAF9] leading-[120%] rounded-[32px] w-full h-[52px] bg-secondary shadow-[0px_4px_4px_0px_rgba(0, 0, 0, 0.15)]"
+              className="text-lg font-bold text-[#F8FAF9] leading-[120%] rounded-full w-full h-[52px] bg-primary shadow-[0px_4px_4px_0px_rgba(0, 0, 0, 0.15)]"
               type="submit"
             >
-              Send
+              {forgotPassMutation.isPending ? "Sending..." : "Send"}
             </Button>
             <p className="flex items-center justify-center gap-1 text-sm font-medium leading-[120%] ">
               <Link className="hover:underline text-[#293440]" href="/login">Back to Login</Link>

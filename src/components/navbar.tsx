@@ -1,8 +1,13 @@
+"use client"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
-import { Heart, User } from "lucide-react"
+import { Heart, LogIn, LogOut, Settings, User } from "lucide-react"
+import { signOut, useSession } from "next-auth/react"
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "./ui/dropdown-menu"
 
 export function Navbar() {
+  const session = useSession()
+  console.log(session)
   return (
     <nav className="bg-primary text-white px-4 py-4">
       <div className="max-w-7xl mx-auto flex items-center justify-between">
@@ -32,12 +37,46 @@ export function Navbar() {
           </div>
         </div>
         <div className="flex items-center space-x-4">
-          <Button variant="ghost" size="sm" className="text-white hover:text-gray-200 hover:bg-white/10">
-            <User className="w-4 h-4 mr-2" />
-            Your Account
-          </Button>
+          {session.status === 'authenticated' ? (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="text-white hover:text-gray-200 hover:bg-white/10"
+                >
+                  <User className="w-4 h-4 mr-2" />
+                  Your Account
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-40 bg-white">
+                <DropdownMenuItem asChild className="cursor-pointer">
+                  <Link href="/account"><Settings /> My Account</Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => signOut()} className="cursor-pointer text-red-500">
+                  <LogOut /> Logout
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          ) : (
+            <Link href="/login">
+              <Button
+                variant="ghost"
+                size="sm"
+                className="text-white hover:text-gray-200 hover:bg-white/10"
+              >
+                <LogIn className="w-4 h-4 mr-2" />
+                Login
+              </Button>
+            </Link>
+          )}
+
           <Link href="/favorites">
-            <Button variant="ghost" size="sm" className="text-white hover:text-gray-200 hover:bg-white/10">
+            <Button
+              variant="ghost"
+              size="sm"
+              className="text-white hover:text-gray-200 hover:bg-white/10"
+            >
               <Heart className="w-4 h-4" />
             </Button>
           </Link>
