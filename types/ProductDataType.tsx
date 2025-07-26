@@ -14,6 +14,7 @@ export type Product = {
   createdAt: string;
   updatedAt: string;
   __v: number;
+  isFavorited:boolean
 };
 
 export type Pagination = {
