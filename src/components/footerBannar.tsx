@@ -5,16 +5,16 @@ import React from 'react'
 const FooterBannar = () => {
     return (
         <div>
-            <div className=" rounded-lg  p-6">
-                <div className="text-center mb-6">
-                    <h2 className="text-xl font-semibold mb-2">
+            <div className=" rounded-lg  p-6 my-[100px]">
+                <div className="text-center mb-[42px]">
+                    <h2 className="text-5xl text-[#1F2937]  font-bold mb-2">
                         Contact us to purchase your
                         <br />
                         favorite products.
                     </h2>
                 </div>
 
-                <div className="flex flex-col lg:flex-row items-center gap-8">
+                <div className="flex flex-col lg:flex-row items-center gap-[118px]">
                     <div className="flex-shrink-0">
                         <div className="w-[475px] h-[457px] bg-gradient-to-br from-teal-100 to-teal-200 rounded-lg flex items-center justify-center">
                             <Image
@@ -44,6 +44,7 @@ const FooterBannar = () => {
                             </div>
                         </div>
                     </div>
+
                 </div>
             </div>
         </div>

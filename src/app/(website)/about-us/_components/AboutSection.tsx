@@ -3,7 +3,7 @@ import FooterBannar from "@/components/footerBannar";
 export function AboutSection() {
   return (
     <section className="bg-white py-16 px-4 md:px-8">
-      <div className="max-w-4xl mx-auto space-y-12 text-gray-800">
+      <div className="container mx-auto space-y-12 text-gray-800">
         {/* Section 1: Who We Are */}
         <div className="space-y-4">
           <h2 className="text-center text-2xl md:text-3xl font-semibold">
@@ -55,7 +55,7 @@ export function AboutSection() {
             </p>
           </div>
         </div>
-        <FooterBannar/>
+        <FooterBannar />
       </div>
     </section>
   )

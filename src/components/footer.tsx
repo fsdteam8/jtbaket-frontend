@@ -5,7 +5,8 @@ export function Footer() {
   return (
     <footer className="bg-primary text-white py-12 px-4">
       <div className="max-w-6xl mx-auto">
-        <div className="grid md:grid-cols-4 gap-8">
+        <div className="grid grid-cols-2 items-center justify-center  md:grid-cols-4 gap-8">
+
           <div>
             <h3 className="text-2xl font-bold mb-4">logo</h3>
             <p className="text-sm mb-6">Lorem Ipsum is a dummy or placeholder text commonly used in graphic design.</p>
@@ -19,28 +20,28 @@ export function Footer() {
           <div>
             <h4 className="font-semibold mb-4">Quick Links</h4>
             <div className="space-y-2">
-              <Link href="/about" className="block text-sm hover:text-gray-300">
+              <Link href="/about-us" className="block text-sm hover:text-gray-300">
                 About Us
               </Link>
-              <Link href="/mission" className="block text-sm hover:text-gray-300">
+              {/* <Link href="/about-us" className="block text-sm hover:text-gray-300">
                 Mission
-              </Link>
+              </Link> */}
             </div>
           </div>
 
           <div>
             <h4 className="font-semibold mb-4">Customer Service</h4>
             <div className="space-y-2">
-              <Link href="/faqs" className="block text-sm hover:text-gray-300">
+              <Link href="/faq" className="block text-sm hover:text-gray-300">
                 FAQs
               </Link>
-              <Link href="/contact" className="block text-sm hover:text-gray-300">
+              <Link href="/contact-us" className="block text-sm hover:text-gray-300">
                 Contact Us
               </Link>
-              <Link href="/privacy" className="block text-sm hover:text-gray-300">
+              <Link href="/privacy-policy" className="block text-sm hover:text-gray-300">
                 Privacy Policy
               </Link>
-              <Link href="/terms" className="block text-sm hover:text-gray-300">
+              <Link href="/terms&conditions" className="block text-sm hover:text-gray-300">
                 Terms & Conditions
               </Link>
             </div>
@@ -57,6 +58,7 @@ export function Footer() {
               </div>
             </div>
           </div>
+
         </div>
 
         <div className="border-t border-white/20 mt-8 pt-8 text-center">

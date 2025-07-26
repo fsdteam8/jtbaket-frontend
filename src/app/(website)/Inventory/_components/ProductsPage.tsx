@@ -75,12 +75,14 @@ export default function ProductsPage() {
         {
           headers: {
             "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
           },
         }
       );
       if (!res.ok) throw new Error("Failed to fetch products");
       return res.json();
     },
+     enabled: !!token,
   });
 
   const products = useMemo(() => {
@@ -156,10 +158,10 @@ export default function ProductsPage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <div className="container mx-auto px-4 py-8">
+      <div className="container mx-auto px-4 md:py-8  ">
         {/* Filters */}
-        <div className="flex justify-between mb-[46px] items-center  gap-4 flex-wrap">
-          <div className="text-sm text-gray-700">Filter by :</div>
+        <div className="flex justify-between  mb-[46px] items-center  gap-4">
+          <div className="text-sm text-gray-700 md:block hidden">Filter by :</div>
 
           {/* Category Filter */}
           <Select
@@ -200,60 +202,64 @@ export default function ProductsPage() {
         </div>
 
         {/* Products */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-stretch">
           {isLoading
             ? renderSkeletons()
             : products?.map((product) => (
               <Card
                 key={product._id}
-                className="overflow-hidden shadow-none border-none transition-shadow"
+                className="overflow-hidden shadow-none border-none transition-shadow h-full"
               >
-                <CardContent className="p-0">
-                  <div className="flex">
-                    <div className="w-[296px] h-[375px] relative group p-4 shadow-lg rounded-lg">
-                      <Image
-                        src={product.thumbnail}
-                        alt={product.name}
-                        width={900}
-                        height={900}
-                        className="w-full rounded-lg h-full object-cover"
-                      />
+                <CardContent className="p-0 h-full">
+                  <div className="flex flex-col lg:flex-row h-full">
+                    {/* Image Section */}
+                    <div className="relative group p-4 w-full lg:w-[296px] h-[300px] lg:h-auto">
+                      <div className="w-full h-full rounded-lg overflow-hidden shadow-lg">
+                        <Image
+                          src={product.thumbnail}
+                          alt={product.name}
+                          width={900}
+                          height={900}
+                          className="w-full h-full object-cover"
+                        />
+                      </div>
                       <button
                         onClick={() => {
                           setSelectedImage(product.thumbnail);
                           setIsModalOpen(true);
                         }}
-                        className="absolute top-[50%] right-[50%] bg-white p-1 rounded-full shadow-md opacity-0 group-hover:opacity-100 transition-opacity"
+                        className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white p-1 rounded-full shadow-md opacity-0 group-hover:opacity-100 transition-opacity"
                       >
                         <Plus className="w-5 h-5 text-gray-800" />
                       </button>
                     </div>
 
-                    <div className="flex-1 p-4">
-                      <h3 className="font-semibold text-gray-900 mb-1">
-                        {product.name}
-                      </h3>
-                      <div className="text-sm text-gray-600 space-y-1 mb-3">
-                        <div>
-                          Product ID:{" "}
-                          <span className="text-blue-600">
-                            {product.productId}
-                          </span>
+                    {/* Info Section */}
+                    <div className="flex flex-col justify-between p-4 flex-1">
+                      <div>
+                        <h3 className="font-semibold text-gray-900 mb-1">
+                          {product.name}
+                        </h3>
+                        <div className="text-sm text-gray-600 space-y-1 mb-3">
+                          <div>
+                            Product ID:{" "}
+                            <span className="text-blue-600">{product.productId}</span>
+                          </div>
+                          <div>Quantity: {product.quantity}</div>
+                          <div>Type: {product.type}</div>
+                          <div className="font-semibold text-green-600">
+                            Price: ₹{product.price.toLocaleString()}
+                          </div>
                         </div>
-                        <div>Quantity: {product.quantity}</div>
-                        <div>Type: {product.type}</div>
-                        <div className="font-semibold text-green-600">
-                          Price: ₹{product.price.toLocaleString()}
-                        </div>
+                        <p className="text-xs text-gray-500 mb-3 line-clamp-3">
+                          {product.description}
+                        </p>
                       </div>
-                      <p className="text-xs text-gray-500 mb-3 line-clamp-3">
-                        {product.description}
-                      </p>
 
                       <Button
                         onClick={() => addToFavorites(product._id)}
                         disabled={isLoadingAdd === product._id}
-                        className="w-full bg-transparent hover:bg-primary hover:text-white border-primary border rounded-full text-primary text-sm py-2"
+                        className={`w-full bg-transparent hover:bg-primary hover:text-white border-primary border rounded-full text-primary text-sm py-2 mt-2 ${product.isFavorited ? "bg-red-500 border-red-500 text-white hover:bg-red-500/80":""}`}
                       >
                         {isLoadingAdd === product._id
                           ? "Added to Favorites"
@@ -266,6 +272,7 @@ export default function ProductsPage() {
               </Card>
             ))}
         </div>
+
 
         {/* Pagination */}
         {pagination && !isLoading && (
