@@ -1,13 +1,16 @@
+
+
 "use client";
 
 import Image from "next/image";
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
 import { ProductResponse } from "../../../../../types/ProductDataType";
+import { Category, CategoryResponse } from "../../../../../types/CategoryType";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -26,6 +29,13 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination";
+import {
+  Select,
+  SelectTrigger,
+  SelectValue,
+  SelectContent,
+  SelectItem,
+} from "@/components/ui/select";
 
 export default function ProductsPage() {
   const session = useSession();
@@ -33,16 +43,35 @@ export default function ProductsPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
+  const [selectedCategory, setSelectedCategory] = useState<string>("all");
+  const [priceSort, setPriceSort] = useState<"asc" | "desc" | null>(null);
 
   const router = useRouter();
   const token = (session?.data?.user as { accessToken: string })?.accessToken;
   const queryClient = useQueryClient();
 
-  const { data, isLoading } = useQuery<ProductResponse>({
-    queryKey: ["Product", currentPage],
+  // Category query
+  const { data: categoryData } = useQuery<CategoryResponse>({
+    queryKey: ["categories"],
     queryFn: async () => {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/category`);
+      if (!res.ok) throw new Error("Failed to fetch categories");
+      return res.json();
+    },
+  });
+
+  // Product query with backend filters (except priceSort)
+  const { data, isLoading } = useQuery<ProductResponse>({
+    queryKey: ["Product", currentPage, selectedCategory],
+    queryFn: async () => {
+      const params = new URLSearchParams();
+      params.append("page", String(currentPage));
+      if (selectedCategory !== "all") {
+        params.append("category", selectedCategory);
+      }
+
       const res = await fetch(
-        `${process.env.NEXT_PUBLIC_BASE_URL}/product?page=${currentPage}`,
+        `${process.env.NEXT_PUBLIC_BASE_URL}/product?${params.toString()}`,
         {
           headers: {
             "Content-Type": "application/json",
@@ -54,7 +83,18 @@ export default function ProductsPage() {
     },
   });
 
-  const products = data?.data.products;
+  const products = useMemo(() => {
+    if (!data?.data?.products) return [];
+
+    const sorted = [...data.data.products];
+    if (priceSort === "asc") {
+      sorted.sort((a, b) => a.price - b.price);
+    } else if (priceSort === "desc") {
+      sorted.sort((a, b) => b.price - a.price);
+    }
+    return sorted;
+  }, [data, priceSort]);
+
   const pagination = data?.data.pagination;
 
   const addToFavoritesMutation = useMutation({
@@ -94,8 +134,8 @@ export default function ProductsPage() {
     addToFavoritesMutation.mutate(id);
   };
 
-  const renderSkeletons = () => {
-    return Array.from({ length: 4 }).map((_, i) => (
+  const renderSkeletons = () =>
+    Array.from({ length: 4 }).map((_, i) => (
       <Card key={i} className="overflow-hidden">
         <CardContent className="p-0 flex">
           <Skeleton className="w-32 h-32" />
@@ -108,7 +148,6 @@ export default function ProductsPage() {
         </CardContent>
       </Card>
     ));
-  };
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
@@ -118,81 +157,114 @@ export default function ProductsPage() {
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="container mx-auto px-4 py-8">
-        <div className="flex justify-between items-center mb-8">
-          <div>
-            <h1 className="text-2xl font-semibold text-gray-900">Products</h1>
-            <p className="text-gray-600 mt-1">
-              Browse our collection of premium products
-            </p>
-          </div>
+        {/* Filters */}
+        <div className="flex justify-between mb-[46px] items-center  gap-4 flex-wrap">
+          <div className="text-sm text-gray-700">Filter by :</div>
+
+          {/* Category Filter */}
+          <Select
+            onValueChange={(val) => {
+              setSelectedCategory(val);
+              setCurrentPage(1);
+            }}
+            value={selectedCategory}
+          >
+            <SelectTrigger className="w-[180px]">
+              <SelectValue placeholder="Category" />
+            </SelectTrigger>
+            <SelectContent className="bg-white">
+              <SelectItem value="all">All Categories</SelectItem>
+              {categoryData?.data.categories.map((cat: Category) => (
+                <SelectItem key={cat._id} value={cat._id}>
+                  {cat.name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+
+          {/* Price Sort Filter */}
+          <Select
+            onValueChange={(val: "asc" | "desc") => {
+              setPriceSort(val);
+              setCurrentPage(1);
+            }}
+          >
+            <SelectTrigger className="w-[180px]">
+              <SelectValue placeholder="Prices" />
+            </SelectTrigger>
+            <SelectContent className="bg-white">
+              <SelectItem value="asc">Price: Low to High</SelectItem>
+              <SelectItem value="desc">Price: High to Low</SelectItem>
+            </SelectContent>
+          </Select>
         </div>
 
+        {/* Products */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {isLoading
             ? renderSkeletons()
             : products?.map((product) => (
-                <Card
-                  key={product._id}
-                  className="overflow-hidden shadow-none border-none transition-shadow"
-                >
-                  <CardContent className="p-0">
-                    <div className="flex">
-                      <div className="w-[296px] h-[375px] relative group p-4 shadow-lg rounded-lg">
-                        <Image
-                          src={product.thumbnail}
-                          alt={product.name}
-                          width={900}
-                          height={900}
-                          className="w-full rounded-lg h-full object-cover"
-                        />
-                        <button
-                          onClick={() => {
-                            setSelectedImage(product.thumbnail);
-                            setIsModalOpen(true);
-                          }}
-                          className="absolute top-[50%] right-[50%] bg-white p-1 rounded-full shadow-md opacity-0 group-hover:opacity-100 transition-opacity"
-                        >
-                          <Plus className="w-5 h-5 text-gray-800" />
-                        </button>
-                      </div>
-
-                      <div className="flex-1 p-4">
-                        <div className="flex justify-between items-start mb-2">
-                          <h3 className="font-semibold text-gray-900">
-                            {product.name}
-                          </h3>
-                        </div>
-                        <div className="space-y-1 text-sm text-gray-600 mb-3">
-                          <div>
-                            Product ID:{" "}
-                            <span className="text-blue-600">
-                              {product.productId}
-                            </span>
-                          </div>
-                          <div>Quantity: {product.quantity}</div>
-                          <div>Type: {product.type}</div>
-                          <div className="font-semibold text-green-600">
-                            Price: ₹{product.price.toLocaleString()}
-                          </div>
-                        </div>
-                        <p className="text-xs text-gray-500 mb-3 line-clamp-3">
-                          {product.description}
-                        </p>
-                        <Button
-                          onClick={() => addToFavorites(product._id)}
-                          disabled={isLoadingAdd === product._id}
-                          className="w-full bg-transparent hover:bg-primary hover:text-white border-primary border rounded-full text-primary text-sm py-2"
-                        >
-                          {isLoadingAdd === product._id
-                            ? "Added to Favorites"
-                            : "Add to favorites"}{" "}
-                          <Heart className="ml-2 h-4 w-4" />
-                        </Button>
-                      </div>
+              <Card
+                key={product._id}
+                className="overflow-hidden shadow-none border-none transition-shadow"
+              >
+                <CardContent className="p-0">
+                  <div className="flex">
+                    <div className="w-[296px] h-[375px] relative group p-4 shadow-lg rounded-lg">
+                      <Image
+                        src={product.thumbnail}
+                        alt={product.name}
+                        width={900}
+                        height={900}
+                        className="w-full rounded-lg h-full object-cover"
+                      />
+                      <button
+                        onClick={() => {
+                          setSelectedImage(product.thumbnail);
+                          setIsModalOpen(true);
+                        }}
+                        className="absolute top-[50%] right-[50%] bg-white p-1 rounded-full shadow-md opacity-0 group-hover:opacity-100 transition-opacity"
+                      >
+                        <Plus className="w-5 h-5 text-gray-800" />
+                      </button>
                     </div>
-                  </CardContent>
-                </Card>
-              ))}
+
+                    <div className="flex-1 p-4">
+                      <h3 className="font-semibold text-gray-900 mb-1">
+                        {product.name}
+                      </h3>
+                      <div className="text-sm text-gray-600 space-y-1 mb-3">
+                        <div>
+                          Product ID:{" "}
+                          <span className="text-blue-600">
+                            {product.productId}
+                          </span>
+                        </div>
+                        <div>Quantity: {product.quantity}</div>
+                        <div>Type: {product.type}</div>
+                        <div className="font-semibold text-green-600">
+                          Price: ₹{product.price.toLocaleString()}
+                        </div>
+                      </div>
+                      <p className="text-xs text-gray-500 mb-3 line-clamp-3">
+                        {product.description}
+                      </p>
+
+                      <Button
+                        onClick={() => addToFavorites(product._id)}
+                        disabled={isLoadingAdd === product._id}
+                        className="w-full bg-transparent hover:bg-primary hover:text-white border-primary border rounded-full text-primary text-sm py-2"
+                      >
+                        {isLoadingAdd === product._id
+                          ? "Added to Favorites"
+                          : "Add to favorites"}{" "}
+                        <Heart className="ml-2 h-4 w-4" />
+                      </Button>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
         </div>
 
         {/* Pagination */}
