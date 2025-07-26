@@ -1,5 +1,6 @@
 /* eslint-disable react/no-unescaped-entities */
 import { Button } from "@/components/ui/button"
+import Link from "next/link"
 
 export function MissionSection() {
   return (
@@ -33,7 +34,7 @@ export function MissionSection() {
             </p>
           </div>
           <div className="text-center mt-8">
-            <Button className="bg-primary hover:bg-primary/90 text-white px-8 py-3">See More...</Button>
+           <Link href={"/about-us"}>  <Button className="bg-primary hover:bg-primary/90 text-white px-8 py-3">See More...</Button></Link>
           </div>
         </div>
       </div>

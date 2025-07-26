@@ -14,10 +14,11 @@ import { useState } from "react"
 
 export default function FavoritesPage() {
   const session = useSession()
-  const [isLoadingDelete, setIsLoading] = useState<string>('');
+  const [isLoadingDelete, setIsLoading] = useState<string>("")
 
   const token = (session?.data?.user as { accessToken: string })?.accessToken
   const queryClient = useQueryClient()
+
   const {
     data: myFavorites,
     isLoading,
@@ -46,9 +47,7 @@ export default function FavoritesPage() {
       })
 
       const resData = await response.json()
-      if (!response.ok) {
-        throw new Error(resData.message || "Failed to remove from favorites")
-      }
+      if (!response.ok) throw new Error(resData.message || "Failed to remove from favorites")
       return resData
     },
     onSuccess: (success) => {
@@ -64,38 +63,41 @@ export default function FavoritesPage() {
     setIsLoading(id)
     removeToFavoritesMutation.mutate(id)
   }
-  if (myFavorites?.data?.length === 0) {
-
-  }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="container mx-auto px-4 py-8">
+    <div className="min-h-screen bg-gray-50 pb-10">
+      <div className="container mx-auto px-4 py-8 max-w-7xl">
         <div className="flex items-center gap-4 mb-8">
           <Link href="/">
-            <Button variant="outline" size="sm" className="flex items-center gap-2 bg-transparent">
-              <ArrowLeft className="w-4 h-4" />
+            <Button
+              variant="outline"
+              size="sm"
+              className="flex items-center gap-2 bg-transparent text-sm sm:text-base"
+            >
+              <ArrowLeft className="w-4 h-4 sm:w-5 sm:h-5" />
               Back to Products
             </Button>
           </Link>
         </div>
 
-        {(myFavorites && myFavorites?.data?.length > 0) && (
-          <div className="text-center mb-8">
-            <h1 className="text-2xl font-semibold text-gray-900 mb-2">My Favorites</h1>
-            <p className="text-gray-600">
-              Here are the products you&apos;ve saved. You can remove items or contact us to learn more.
+        {myFavorites && myFavorites?.data?.length > 0 && (
+          <div className="text-center mb-14">
+            <h1 className="text-xl sm:text-2xl md:text-3xl font-semibold text-gray-900 mb-2">
+              My Favorites
+            </h1>
+            <p className="text-gray-600 text-sm sm:text-base">
+              Here are the products you&apoch;ve saved. You can remove items or contact us to learn more.
             </p>
           </div>
         )}
 
         {isLoading ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-6">
             {Array.from({ length: 4 }).map((_, i) => (
-              <Card key={i}>
+              <Card key={i} className="w-full h-full">
                 <CardContent className="p-0">
-                  <div className="flex">
-                    <Skeleton className="w-32 h-32" />
+                  <div className="flex flex-col sm:flex-row h-full">
+                    <Skeleton className="w-full sm:w-32 h-32 sm:h-40" />
                     <div className="flex-1 p-4 space-y-3">
                       <Skeleton className="h-4 w-3/4" />
                       <Skeleton className="h-3 w-full" />
@@ -111,7 +113,12 @@ export default function FavoritesPage() {
         ) : myFavorites?.data?.length === 0 ? (
           <div className="text-center py-12">
             <div className="text-gray-400 mb-4">
-              <svg className="w-16 h-16 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg
+                className="w-12 h-12 sm:w-16 sm:h-16 mx-auto"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
                 <path
                   strokeLinecap="round"
                   strokeLinejoin="round"
@@ -120,48 +127,65 @@ export default function FavoritesPage() {
                 />
               </svg>
             </div>
-            <h3 className="text-lg font-medium text-gray-900 mb-2">No favorites yet</h3>
-            <p className="text-gray-600 mb-4">Start browsing products and add them to your favorites!</p>
+            <h3 className="text-base sm:text-lg font-medium text-gray-900 mb-2">
+              No favorites yet
+            </h3>
+            <p className="text-gray-600 mb-4 text-sm sm:text-base">
+              Start browsing products and add them to your favorites!
+            </p>
             <Link href="/">
-              <Button className="bg-primary text-white">Browse Products</Button>
+              <Button className="bg-primary text-white text-sm sm:text-base px-4 sm:px-6">
+                Browse Products
+              </Button>
             </Link>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-stretch">
             {myFavorites?.data?.map((product) => (
-              <Card key={product._id} className="overflow-hidden border-none shadow-none  transition-shadow">
-                <CardContent className="p-0">
-                  <div className="flex ">
-                    <div className="w-[296px] h-[375px] flex-shrink-0 p-4 shadow-lg rounded-lg">
-                      <Image
-                        src={product?.product?.thumbnail}
-                        alt={product?.product?._id}
-                        width={900}
-                        height={900}
-                        className="w-full h-full object-cover"
-                      />
+              <Card key={product._id} className="overflow-hidden shadow-none border-none h-full">
+                <CardContent className="p-0 h-full">
+                  <div className="flex flex-col lg:flex-row h-full">
+                    <div className="w-full lg:w-[296px] h-[250px] lg:h-auto flex-shrink-0 p-4">
+                      <div className="w-full h-full overflow-hidden rounded-lg shadow-md">
+                        <Image
+                          src={product.product.thumbnail}
+                          alt={product.product.name}
+                          width={900}
+                          height={900}
+                          className="w-full h-full object-cover"
+                          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                        />
+                      </div>
                     </div>
-                    <div className="flex-1 p-4">
-                      <div className="flex justify-between items-start mb-2">
-                        <h3 className="font-semibold text-gray-900">{product?.product?.name}</h3>
-                      </div>
-                      <div className="space-y-1 text-sm text-gray-600 mb-3">
-                        <div>
-                          Product ID: <span className="text-blue-600">{product?.product?._id}</span>
+
+                    <div className="flex-1 p-4 flex flex-col justify-between">
+                      <div>
+                        <h3 className="font-semibold text-gray-900 text-base sm:text-lg mb-1">
+                          {product.product.name}
+                        </h3>
+                        <div className="space-y-1 text-xs sm:text-sm text-gray-600 mb-3">
+                          <div>
+                            Product ID: <span className="text-blue-600">{product.product._id}</span>
+                          </div>
+                          <div>Quantity: {product.product.quantity}</div>
+                          <div>Type: {product.product.type}</div>
+                          <div className="font-semibold text-green-600">
+                            Price: ₹{product.product.price?.toLocaleString()}
+                          </div>
                         </div>
-                        <div>Quantity: {product?.product?.quantity}</div>
-                        <div>Type: {product?.product?.type}</div>
-                        <div className="font-semibold text-green-600">Price: ₹{product?.product?.price?.toLocaleString()}</div>
+                        <p className="text-xs sm:text-sm text-gray-500 mb-3 line-clamp-3">
+                          {product.product.description}
+                        </p>
                       </div>
-                      <p className="text-xs text-gray-500 mb-3 line-clamp-3">{product?.product?.description}</p>
+
                       <Button
                         onClick={() => removeFromFavorites(product.product._id)}
                         disabled={isLoadingDelete === product.product._id}
                         variant="destructive"
-                        className="w-full bg-transparent border border-[#FF3333] rounded-full hover:bg-[#FF3333] text-red-500 hover:text-white text-sm py-2 flex items-center justify-center gap-2"
+                        className="w-full bg-transparent border border-[#FF3333] rounded-full hover:bg-[#FF3333] text-red-500 hover:text-white text-xs sm:text-sm py-2 sm:py-3 flex items-center justify-center gap-2 mt-2"
                       >
                         <Trash2 className="w-4 h-4" />
-                        {isLoadingDelete === product?.product?._id ? "Remove..." : "Remove"}
+                        {isLoadingDelete === product.product._id ? "Remove..." : "Remove"}
                       </Button>
                     </div>
                   </div>

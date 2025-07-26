@@ -34,6 +34,7 @@ const formSchema = z.object({
 });
 
 const LoginForm = () => {
+  const [loginLoading, setLoginLoading] = useState<boolean>(false)
   const router = useRouter()
   const [showPassword, setShowPassword] = useState(false);
   const form = useForm<z.infer<typeof formSchema>>({
@@ -45,9 +46,12 @@ const LoginForm = () => {
     },
   });
 
+
+
   // 2. Define a submit handler.
   async function onSubmit(values: z.infer<typeof formSchema>) {
     try {
+      setLoginLoading(true);
       const res = await signIn("credentials", {
         email: values?.email,
         password: values?.password,
@@ -59,7 +63,7 @@ const LoginForm = () => {
       toast.success("Login successful");
       router.push("/");
     } catch (error) {
-      console.log(error);
+      setLoginLoading(true);
       toast.error((error as Error).message);
     }
   }
@@ -186,10 +190,11 @@ const LoginForm = () => {
             />
 
             <Button
+              disabled={loginLoading}
               className="text-lg font-bold text-[#F8FAF9] leading-[120%] rounded-full bg-primary hover:bg-primary/30 w-full h-[52px]  shadow-[0px_4px_4px_0px_rgba(0, 0, 0, 0.15)]"
               type="submit"
             >
-              Sign In
+              {loginLoading ? "Sign In..." : "Sign In"}
             </Button>
 
             <p className="text-sm font-medium leading-[120%] text-[#363636] text-center ">
