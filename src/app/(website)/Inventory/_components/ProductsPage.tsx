@@ -82,7 +82,7 @@ export default function ProductsPage() {
       if (!res.ok) throw new Error("Failed to fetch products");
       return res.json();
     },
-     enabled: !!token,
+    //  enabled: !!token,
   });
 
   const products = useMemo(() => {
@@ -213,14 +213,14 @@ export default function ProductsPage() {
                 <CardContent className="p-0 h-full">
                   <div className="flex flex-col lg:flex-row h-full">
                     {/* Image Section */}
-                    <div className="relative group p-4 w-full lg:w-[296px] h-[300px] lg:h-auto">
-                      <div className="w-full h-full rounded-lg overflow-hidden shadow-lg">
+                    <div className="relative group p-4 bg-[#FFFFFF] rounded-lg shadow-lg w-full lg:w-[296px] h-[300px] lg:h-auto">
+                      <div className="w-full max-h-[250px]  overflow-hidden shadow-lg">
                         <Image
                           src={product.thumbnail}
                           alt={product.name}
                           width={900}
                           height={900}
-                          className="w-full h-full object-cover"
+                          className="w-full h-full rounded-xl object-cover"
                         />
                       </div>
                       <button

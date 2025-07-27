@@ -7,14 +7,14 @@ export function MissionSection() {
     <section className="py-16 px-4 bg-[#F8FEFF]">
       <div className="max-w-6xl mx-auto">
         <div className="text-center mb-12">
-          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-6">
+          <h2 className="text-5xl md:text-5xl font-bold text-gray-900 mb-6">
             Your Trusted Destination for Quality Products at Honest Prices
           </h2>
           <p className="text-gray-600 max-w-4xl mx-auto mb-8">
             we believe shopping should be simple, secure, and satisfying. That's why we handpick every product with
             quality, value, and your satisfaction in mind. From the latest trends to everyday esse
           </p>
-          <p className="text-primary font-semibold text-lg">Over 50,000+ customers across</p>
+          <p className="text-primary font-semibold text-lg">Over 50,000+  <span className="text-black">customers across</span></p> 
         </div>
 
         <div >
@@ -34,7 +34,7 @@ export function MissionSection() {
             </p>
           </div>
           <div className="text-center mt-8">
-           <Link href={"/about-us"}>  <Button className="bg-primary hover:bg-primary/90 text-white px-8 py-3">See More...</Button></Link>
+           <Link href={"/about-us"}>  <Button className="bg-primary rounded-full hover:bg-primary/90 text-white px-8 py-5">See More...</Button></Link>
           </div>
         </div>
       </div>

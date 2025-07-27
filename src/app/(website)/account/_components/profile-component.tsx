@@ -22,8 +22,9 @@ import BannerSection from "@/components/homeHeaders/BannerSection"
 import { toast } from "sonner"
 import { useMutation, useQuery } from "@tanstack/react-query"
 import { UserResponse } from "../../../../../types/UserDataType"
-import { signOut, useSession } from "next-auth/react"
+import { useSession } from "next-auth/react"
 import AccountSkeleton from "./skeleton"
+import LogoutModal from "@/components/LogoutModal"
 
 const profileSchema = z.object({
     fullname: z.string().min(1, "Name is required"),
@@ -65,6 +66,7 @@ export default function ProfileInfoComponent({ setChange }: ProfileInfoComponent
     const [previewImage, setPreviewImage] = useState<string | null>(null)
     const fileInputRef = useRef<HTMLInputElement | null>(null)
     const [isEditing, setIsEditing] = useState(false)
+    const [isModalOpen, setIsModalOpen] = useState(false);
 
     // Fetch user data
     const { data, isLoading } = useQuery<UserResponse>({
@@ -246,7 +248,7 @@ export default function ProfileInfoComponent({ setChange }: ProfileInfoComponent
                                                     src={previewImage || "/placeholder.svg?height=80&width=80"}
                                                     alt="Profile"
                                                 />
-                                                <AvatarFallback>{data?.data.name.slice(0,2)}</AvatarFallback>
+                                                <AvatarFallback>{data?.data.name.slice(0, 2)}</AvatarFallback>
                                             </Avatar>
                                         </div>
                                         <Input
@@ -292,7 +294,7 @@ export default function ProfileInfoComponent({ setChange }: ProfileInfoComponent
                                     </Button>
                                     <button
                                         type="button"
-                                        onClick={() => signOut()}
+                                        onClick={() => setIsModalOpen(true)}
                                         className="text-red-500 hover:text-red-600 text-sm font-medium"
                                     >
                                         Log out
@@ -382,9 +384,10 @@ export default function ProfileInfoComponent({ setChange }: ProfileInfoComponent
                             </div>
                         </div>
                     </form>
-
                     <FooterBannar />
                 </div>
+                <LogoutModal open={isModalOpen} onClose={() => setIsModalOpen(false)} />
+
             </div>
         </div>
     )

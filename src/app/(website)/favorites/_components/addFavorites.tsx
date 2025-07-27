@@ -142,17 +142,17 @@ export default function FavoritesPage() {
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-stretch">
             {myFavorites?.data?.map((product) => (
-              <Card key={product._id} className="overflow-hidden shadow-none border-none h-full">
+              <Card key={product?._id} className="overflow-hidden shadow-none border-none h-full">
                 <CardContent className="p-0 h-full">
                   <div className="flex flex-col lg:flex-row h-full">
-                    <div className="w-full lg:w-[296px] h-[250px] lg:h-auto flex-shrink-0 p-4">
-                      <div className="w-full h-full overflow-hidden rounded-lg shadow-md">
+                    <div className="w-full bg-white rounded-lg shadow-lg lg:w-[296px] h-[250px] lg:h-auto flex-shrink-0 p-4">
+                      <div className="w-full max-h-[250px] overflow-hidden  rounded-lg shadow-lg">
                         <Image
-                          src={product.product.thumbnail}
-                          alt={product.product.name}
+                          src={product?.product?.thumbnail}
+                          alt={product?.product?.name}
                           width={900}
                           height={900}
-                          className="w-full h-full object-cover"
+                          className="w-full h-full rounded-xl object-cover"
                           sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
                         />
                       </div>
@@ -161,31 +161,31 @@ export default function FavoritesPage() {
                     <div className="flex-1 p-4 flex flex-col justify-between">
                       <div>
                         <h3 className="font-semibold text-gray-900 text-base sm:text-lg mb-1">
-                          {product.product.name}
+                          {product?.product?.name}
                         </h3>
                         <div className="space-y-1 text-xs sm:text-sm text-gray-600 mb-3">
                           <div>
-                            Product ID: <span className="text-blue-600">{product.product._id}</span>
+                            Product ID: <span className="text-blue-600">{product?.product?._id}</span>
                           </div>
-                          <div>Quantity: {product.product.quantity}</div>
-                          <div>Type: {product.product.type}</div>
+                          <div>Quantity: {product?.product?.quantity}</div>
+                          <div>Type: {product?.product?.type}</div>
                           <div className="font-semibold text-green-600">
-                            Price: ₹{product.product.price?.toLocaleString()}
+                            Price: ₹{product?.product?.price?.toLocaleString()}
                           </div>
                         </div>
                         <p className="text-xs sm:text-sm text-gray-500 mb-3 line-clamp-3">
-                          {product.product.description}
+                          {product?.product?.description}
                         </p>
                       </div>
 
                       <Button
-                        onClick={() => removeFromFavorites(product.product._id)}
-                        disabled={isLoadingDelete === product.product._id}
+                        onClick={() => removeFromFavorites(product?.product?._id)}
+                        disabled={isLoadingDelete === product?.product?._id}
                         variant="destructive"
                         className="w-full bg-transparent border border-[#FF3333] rounded-full hover:bg-[#FF3333] text-red-500 hover:text-white text-xs sm:text-sm py-2 sm:py-3 flex items-center justify-center gap-2 mt-2"
                       >
                         <Trash2 className="w-4 h-4" />
-                        {isLoadingDelete === product.product._id ? "Remove..." : "Remove"}
+                        {isLoadingDelete === product?.product?._id ? "Remove..." : "Remove"}
                       </Button>
                     </div>
                   </div>
