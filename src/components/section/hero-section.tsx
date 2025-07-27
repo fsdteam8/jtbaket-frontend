@@ -19,11 +19,11 @@ export function HeroSection() {
           {'High-quality products for every need - Indoor & Outdoor"High-quality products for every'}
         </p>
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
-         <Link href={"/sign-up"}> <Button className="bg-primary hover:bg-primary/90 text-white px-8 py-3 text-lg">Register Now</Button></Link>
+         <Link href={"/sign-up"}> <Button className="bg-primary rounded-full hover:bg-primary/90 text-white px-8 py-5 text-lg">Register Now</Button></Link>
          <Link href={"/contact-us"}>
           <Button
             variant="outline"
-            className="border-white text-white hover:bg-white hover:text-black px-8 py-3 text-lg bg-transparent"
+            className="border-white rounded-full text-white hover:bg-white hover:text-black px-8 py-5 text-lg bg-transparent"
           >
             Contact Us
           </Button>

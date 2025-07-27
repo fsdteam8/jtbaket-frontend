@@ -94,7 +94,7 @@ const ForgotPasswordForm = () => {
               name="email"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="flex items-center gap-1 text-base font-medium leading-[120%] text-primary pb-2">
+                  <FormLabel className="flex items-center gap-1 text-base font-medium leading-[120%]  pb-2">
                     Email{" "}
                     <sup>
                       <svg
@@ -113,7 +113,7 @@ const ForgotPasswordForm = () => {
                   </FormLabel>
                   <FormControl>
                     <Input
-                      className="w-full h-[52px] text-base font-medium leading-[120%] text-primary rounded-[32px] p-4 border border-[#484848] opacity-80 placeholder:text-[#787878]"
+                      className="w-full h-[52px] text-base font-medium leading-[120%]  rounded-[32px] p-4 border border-[#484848] opacity-80 placeholder:text-[#787878]"
                       placeholder="Enter your email ...."
                       {...field}
                     />

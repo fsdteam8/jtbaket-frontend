@@ -16,7 +16,7 @@ const FooterBannar = () => {
 
                 <div className="flex flex-col lg:flex-row items-center gap-[118px]">
                     <div className="flex-shrink-0">
-                        <div className="w-[475px] h-[457px] bg-gradient-to-br from-teal-100 to-teal-200 rounded-lg flex items-center justify-center">
+                        <div className="w-[475px] h-[457px]  bg-gradient-to-br from-teal-100 to-teal-200 rounded-3xl flex items-center justify-center">
                             <Image
                                 src="/footerBannar.png"
                                 alt="Contact illustration"
