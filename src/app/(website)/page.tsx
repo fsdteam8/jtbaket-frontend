@@ -1,10 +1,8 @@
-
-import FooterBannar from '@/components/footerBannar'
-import { HeroSection } from '@/components/section/hero-section'
-import { MissionSection } from '@/components/section/mission-section'
+import FooterBannar from "@/components/footerBannar";
+import { HeroSection } from "@/components/section/hero-section";
+import MissionSection from "@/components/section/mission-section";
 // import { ClientThemeProvider } from '@/lib/client-theme-provider'
 // import { ColorFetcher } from '@/lib/color-featcher'
-import React from 'react'
 
 const HomePage = () => {
   return (
@@ -13,14 +11,14 @@ const HomePage = () => {
       {/* <ColorFetcher /> */}
       <HeroSection />
       <MissionSection />
-      <div className='bg-[#F2F9F2]'>
-        <div className='container'>
+      <div className="bg-[#F2F9F2]">
+        <div className="container">
           <FooterBannar />
         </div>
       </div>
     </div>
     // </ClientThemeProvider>
-  )
-}
+  );
+};
 
-export default HomePage
+export default HomePage;

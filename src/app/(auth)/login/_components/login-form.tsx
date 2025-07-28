@@ -5,6 +5,7 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   Form,
   FormControl,
@@ -14,14 +15,13 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Eye, EyeOff } from "lucide-react";
-import { useState } from "react";
-import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
-import Link from "next/link";
+import { Eye, EyeOff } from "lucide-react";
 import { signIn } from "next-auth/react";
-import { toast } from "sonner";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { toast } from "sonner";
 
 const formSchema = z.object({
   email: z.string().email({
@@ -34,8 +34,8 @@ const formSchema = z.object({
 });
 
 const LoginForm = () => {
-  const [loginLoading, setLoginLoading] = useState<boolean>(false)
-  const router = useRouter()
+  const [loginLoading, setLoginLoading] = useState<boolean>(false);
+  const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -45,8 +45,6 @@ const LoginForm = () => {
       rememberMe: false,
     },
   });
-
-
 
   // 2. Define a submit handler.
   async function onSubmit(values: z.infer<typeof formSchema>) {
@@ -69,7 +67,7 @@ const LoginForm = () => {
   }
   return (
     <div>
-      <div className="w-[547px] p-6 md:p-7 lg:p-8 rounded-[16px] bg-white shadow-[0px_0px_4px_rgba(0,0,0,0.10)]">
+      <div className="w-full  md:w-[547px] p-6 md:p-7 lg:p-8 rounded-[16px] bg-white shadow-[0px_0px_4px_rgba(0,0,0,0.10)]">
         <h3 className="text-2xl md:text-[28px] lg:text-[32px] font-extrabold text-[#1F2937] text-center leading-[120%] ">
           Welcome Back
         </h3>
@@ -199,7 +197,10 @@ const LoginForm = () => {
 
             <p className="text-sm font-medium leading-[120%] text-[#363636] text-center ">
               Don’t have an account?
-              <Link href="/sign-up" className="text-secondary pl-1 hover:underline">
+              <Link
+                href="/sign-up"
+                className="text-secondary pl-1 hover:underline"
+              >
                 Register Here Now
               </Link>{" "}
             </p>
