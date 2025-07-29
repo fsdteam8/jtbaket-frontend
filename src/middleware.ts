@@ -1,12 +1,12 @@
 import { getToken } from "next-auth/jwt";
-import { NextResponse, NextRequest } from "next/server";
+import { NextResponse } from "next/server";
+import type { NextRequest } from "next/server";
 
 export async function middleware(request: NextRequest) {
   const token = await getToken({
     req: request,
     secret: process.env.NEXTAUTH_SECRET,
   });
-  console.log(token)
 
   if (!token) {
     return NextResponse.redirect(new URL("/login", request.url));
@@ -16,5 +16,5 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/account", "/favorites"],
+  matcher: ["/account/:path*", "/favorites/:path*"],
 };
