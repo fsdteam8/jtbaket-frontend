@@ -1,20 +1,14 @@
-
-
 "use client";
 
-import Image from "next/image";
-import { useState, useMemo } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useSession } from "next-auth/react";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
+import { useMemo, useState } from "react";
 import { toast } from "sonner";
 
-import { ProductResponse } from "../../../../../types/ProductDataType";
-import { Category, CategoryResponse } from "../../../../../types/CategoryType";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Skeleton } from "@/components/ui/skeleton";
-import { Heart, Plus } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -31,11 +25,15 @@ import {
 } from "@/components/ui/pagination";
 import {
   Select,
-  SelectTrigger,
-  SelectValue,
   SelectContent,
   SelectItem,
+  SelectTrigger,
+  SelectValue,
 } from "@/components/ui/select";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Heart, Plus } from "lucide-react";
+import { Category, CategoryResponse } from "../../../../../types/CategoryType";
+import { ProductResponse } from "../../../../../types/ProductDataType";
 
 export default function ProductsPage() {
   const session = useSession();
@@ -161,7 +159,9 @@ export default function ProductsPage() {
       <div className="container mx-auto px-4 md:py-8  ">
         {/* Filters */}
         <div className="flex justify-between  mb-[46px] items-center  gap-4">
-          <div className="text-sm text-gray-700 md:block hidden">Filter by :</div>
+          <div className="text-sm text-gray-700 md:block hidden">
+            Filter by :
+          </div>
 
           {/* Category Filter */}
           <Select
@@ -206,73 +206,78 @@ export default function ProductsPage() {
           {isLoading
             ? renderSkeletons()
             : products?.map((product) => (
-              <Card
-                key={product._id}
-                className="overflow-hidden shadow-none border-none transition-shadow h-full"
-              >
-                <CardContent className="p-0 h-full">
-                  <div className="flex flex-col lg:flex-row h-full">
-                    {/* Image Section */}
-                    <div className="relative group p-4 bg-[#FFFFFF] rounded-lg shadow-lg w-full lg:w-[296px] h-[300px] lg:h-auto">
-                      <div className="w-full max-h-[250px]  overflow-hidden shadow-lg">
-                        <Image
-                          src={product.thumbnail}
-                          alt={product.name}
-                          width={900}
-                          height={900}
-                          className="w-full h-full rounded-xl object-cover"
-                        />
-                      </div>
-                      <button
-                        onClick={() => {
-                          setSelectedImage(product.thumbnail);
-                          setIsModalOpen(true);
-                        }}
-                        className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white p-1 rounded-full shadow-md opacity-0 group-hover:opacity-100 transition-opacity"
-                      >
-                        <Plus className="w-5 h-5 text-gray-800" />
-                      </button>
-                    </div>
-
-                    {/* Info Section */}
-                    <div className="flex flex-col justify-between p-4 flex-1">
-                      <div>
-                        <h3 className="font-semibold text-gray-900 mb-1">
-                          {product.name}
-                        </h3>
-                        <div className="text-sm text-gray-600 space-y-1 mb-3">
-                          <div>
-                            Product ID:{" "}
-                            <span className="text-blue-600">{product.productId}</span>
-                          </div>
-                          <div>Quantity: {product.quantity}</div>
-                          <div>Type: {product.type}</div>
-                          <div className="font-semibold text-green-600">
-                            Price: ₹{product.price.toLocaleString()}
-                          </div>
+                <Card
+                  key={product._id}
+                  className="overflow-hidden shadow-lg bg-white transition-shadow h-full"
+                >
+                  <CardContent className="p-0 h-full bg-white">
+                    <div className="flex flex-col lg:flex-row h-full">
+                      {/* Image Section */}
+                      <div className="relative group p-4  w-full lg:w-[296px] h-[300px] lg:h-auto">
+                        <div className="w-full max-h-[250px] rounded-l-xl overflow-hidden shadow-none">
+                          <Image
+                            src={product.thumbnail}
+                            alt={product.name}
+                            width={900}
+                            height={900}
+                            className="w-full h-full rounded-l-xl object-cover"
+                          />
                         </div>
-                        <p className="text-xs text-gray-500 mb-3 line-clamp-3">
-                          {product.description}
-                        </p>
+                        <button
+                          onClick={() => {
+                            setSelectedImage(product.thumbnail);
+                            setIsModalOpen(true);
+                          }}
+                          className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white p-1 rounded-full shadow-md opacity-0 group-hover:opacity-100 transition-opacity"
+                        >
+                          <Plus className="w-5 h-5 text-gray-800" />
+                        </button>
                       </div>
 
-                      <Button
-                        onClick={() => addToFavorites(product._id)}
-                        disabled={isLoadingAdd === product._id}
-                        className={`w-full bg-transparent hover:bg-primary hover:text-white border-primary border rounded-full text-primary text-sm py-2 mt-2 ${product.isFavorited ? "bg-red-500 border-red-500 text-white hover:bg-red-500/80":""}`}
-                      >
-                        {isLoadingAdd === product._id
-                          ? "Added to Favorites"
-                          : "Add to favorites"}{" "}
-                        <Heart className="ml-2 h-4 w-4" />
-                      </Button>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-        </div>
+                      {/* Info Section */}
+                      <div className="flex flex-col justify-between p-4 flex-1">
+                        <div>
+                          <h3 className="font-semibold text-gray-900 mb-1">
+                            {product.name}
+                          </h3>
+                          <div className="text-sm text-gray-600 space-y-1 mb-3">
+                            <div>
+                              Product ID:{" "}
+                              <span className="text-blue-600">
+                                {product.productId}
+                              </span>
+                            </div>
+                            <div>Quantity: {product.quantity}</div>
+                            <div>Type: {product.type}</div>
+                            <div className="font-semibold text-green-600">
+                              Price: ₹{product.price.toLocaleString()}
+                            </div>
+                          </div>
+                          <p className="text-xs text-gray-500 mb-3 line-clamp-3">
+                            {product.description}
+                          </p>
+                        </div>
 
+                        <Button
+                          onClick={() => addToFavorites(product._id)}
+                          disabled={isLoadingAdd === product._id}
+                          className={`w-full bg-transparent hover:bg-primary hover:text-white border-primary border rounded-full text-primary text-sm py-2 mt-2 ${
+                            product.isFavorited
+                              ? "bg-red-500 border-red-500 text-white hover:bg-red-500/80"
+                              : ""
+                          }`}
+                        >
+                          {isLoadingAdd === product._id
+                            ? "Added to Favorites"
+                            : "Add to favorites"}{" "}
+                          <Heart className="ml-2 h-4 w-4" />
+                        </Button>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+        </div>
 
         {/* Pagination */}
         {pagination && !isLoading && (

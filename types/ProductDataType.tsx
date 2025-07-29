@@ -17,6 +17,7 @@ export type Product = {
   isFavorited:boolean
 };
 
+
 export type Pagination = {
   currentPage: number;
   totalPages: number;
