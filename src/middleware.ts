@@ -6,8 +6,9 @@ export async function middleware(request: NextRequest) {
     req: request,
     secret: process.env.NEXTAUTH_SECRET,
   });
-  console.log(token)
-  if (!token) {
+  console.log("response")
+  console.log()
+  if (token && !token.accessToken) {
     return NextResponse.redirect(new URL("/login", request.url));
   }
 
@@ -15,5 +16,5 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/account", "/favorites"],
+  matcher: ["/account","/favorites"],
 };
