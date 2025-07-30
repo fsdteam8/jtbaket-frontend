@@ -3,7 +3,7 @@ import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Heart, LogIn, LogOut, Settings, User } from "lucide-react"
-import {  useSession } from "next-auth/react"
+import { useSession } from "next-auth/react"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -12,6 +12,7 @@ import {
 } from "./ui/dropdown-menu"
 import LogoutModal from "./LogoutModal"
 import { useState } from "react"
+import Image from "next/image"
 
 export function Navbar() {
   const session = useSession()
@@ -29,11 +30,13 @@ export function Navbar() {
   const isActive = (href: string) => pathname === href
 
   return (
-    <nav className="bg-primary text-white px-4 py-4">
-      <div className="max-w-7xl mx-auto flex items-center justify-between">
-        <div className="flex items-center space-x-8">
-          <Link href="/" className="text-2xl font-bold">
-            logo
+    <nav className="bg-primary text-white px-4 ">
+      <div className="container mx-auto flex items-center justify-between">
+        <div className="flex items-center space-x-8 ">
+        
+          <Link href="/" className="">
+            <Image src={'/logo1.png'} width={80} height={80} className="" alt="jtbacked" />
+
           </Link>
 
           <div className="hidden md:flex items-center space-x-6">
@@ -41,16 +44,16 @@ export function Navbar() {
               <Link
                 key={href}
                 href={href}
-                className={`pb-1 transition-colors ${
-                  isActive(href)
-                    ? "border-b-2 border-white text-white"
-                    : "hover:text-gray-200"
-                }`}
+                className={`pb-1 transition-colors ${isActive(href)
+                  ? "border-b-2 border-white text-white"
+                  : "hover:text-gray-200"
+                  }`}
               >
                 {label}
               </Link>
             ))}
           </div>
+
         </div>
 
         <div className="flex items-center space-x-4">
@@ -97,15 +100,14 @@ export function Navbar() {
             <Button
               variant="ghost"
               size="sm"
-              className={`hover:text-gray-200 hover:bg-white/10 ${
-                isActive("/favorites") ? "text-yellow-300" : "text-white"
-              }`}
+              className={`hover:text-gray-200 hover:bg-white/10 ${isActive("/favorites") ? "text-yellow-300" : "text-white"
+                }`}
             >
               <Heart className="w-4 h-4" />
             </Button>
           </Link>
         </div>
-         <LogoutModal open={isModalOpen} onClose={() => setIsModalOpen(false)} />
+        <LogoutModal open={isModalOpen} onClose={() => setIsModalOpen(false)} />
       </div>
     </nav>
   )
