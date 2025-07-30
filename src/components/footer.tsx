@@ -1,5 +1,6 @@
 import Link from "next/link"
 import { Facebook, Instagram, Twitter } from "lucide-react"
+import Image from "next/image"
 
 export function Footer() {
   return (
@@ -8,7 +9,8 @@ export function Footer() {
         <div className="grid grid-cols-2 items-center justify-center  md:grid-cols-4 gap-8">
 
           <div>
-            <h3 className="text-2xl font-bold mb-4">logo</h3>
+            <Image src={'/logo1.png'} width={80} height={80} className="" alt="jtbacked" />
+
             <p className="text-sm mb-6">Lorem Ipsum is a dummy or placeholder text commonly used in graphic design.</p>
             <div className="flex space-x-4">
               <Facebook className="w-5 h-5 hover:text-gray-300 cursor-pointer" />
