@@ -29,17 +29,25 @@ const FooterBannar = () => {
           <div className="flex-1 space-y-4">
             <div className="flex items-center gap-3">
               <Phone className="w-5 h-5 text-gray-600" />
-              <span className="text-gray-700">+1 (888) 000-0000</span>
+              <span className="text-gray-700">+1 818-269-4690</span> 
+       
             </div>
-            <div className="flex items-center gap-3">
+          
+            {/* <div className="flex items-center gap-3">
               <Mail className="w-5 h-5 text-gray-600" />
-              <span className="text-gray-700">info@acme23.com</span>
-            </div>
+              <span className="text-gray-700"> JtbakedCA@gmail.com</span>
+            </div> */}
+            <a href="mailto:JtbakedCA@gmail.com" className="flex items-center gap-3 hover:underline">
+  <Mail className="w-5 h-5 text-gray-600" />
+  <span className="text-gray-700">JtbakedCA@gmail.com</span>
+</a>
             <div className="flex items-start gap-3">
               <MapPin className="w-5 h-5 text-gray-600 mt-0.5" />
               <div className="text-gray-700">
-                <div>100100 Arizona Blvd., Suite A-000,</div>
-                <div>Cupertino, CA 95000-0000</div>
+                <div>3540 E Pico Blvd
+Los Angeles,</div>
+                <div>CA  90023
+United States</div>
               </div>
             </div>
           </div>
