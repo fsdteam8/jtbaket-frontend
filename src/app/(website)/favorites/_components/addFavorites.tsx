@@ -68,7 +68,7 @@ export default function FavoritesPage() {
     <div className="min-h-screen bg-gray-50 pb-10">
       <div className="container mx-auto px-4 py-8 max-w-7xl">
         <div className="flex items-center gap-4 mb-8">
-          <Link href="/">
+          <Link href="/Inventory">
             <Button
               variant="outline"
               size="sm"

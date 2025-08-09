@@ -50,19 +50,24 @@ const LoginForm = () => {
   async function onSubmit(values: z.infer<typeof formSchema>) {
     try {
       setLoginLoading(true);
+
       const res = await signIn("credentials", {
         email: values?.email,
         password: values?.password,
         redirect: false,
       });
+
       if (res?.error) {
         throw new Error(res.error);
       }
-      toast.success("Login successful");
+
+      toast.success("Login successful!");
       router.push("/");
     } catch (error) {
-      setLoginLoading(true);
+      console.error("Login failed:", error);
       toast.error((error as Error).message);
+    } finally {
+      setLoginLoading(false);
     }
   }
   return (
@@ -139,7 +144,10 @@ const LoginForm = () => {
                         placeholder="Enter Password ...."
                         {...field}
                       />
-                      <button className="absolute top-3.5 right-4">
+                      <button
+                        type="button"
+                        className="absolute top-3.5 right-4"
+                      >
                         {showPassword ? (
                           <Eye onClick={() => setShowPassword(!showPassword)} />
                         ) : (

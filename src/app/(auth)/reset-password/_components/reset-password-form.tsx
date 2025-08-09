@@ -71,11 +71,14 @@ const ResetPasswordForm = () => {
     },
 
     onSuccess: (data) => {
-      toast.success(data.message || "Password reset successfully");
-      setIsOpen(true);
-      setTimeout(() => {
-        router.push("/login");
-      }, 2000);
+      if (data?.status) {
+        // toast.success(data?.message || "Password reset successfully");
+        setIsOpen(true);
+        setTimeout(() => {
+          router.push("/login");
+        }, 2000);
+        return;
+      }
     },
 
     onError: (error: Error) => {
@@ -207,7 +210,9 @@ const ResetPasswordForm = () => {
               disabled={resetPasswordMutation.isPending}
               className="text-lg font-bold text-[#F8FAF9] leading-[120%] rounded-full bg-primary w-full h-[52px]  shadow-[0px_4px_4px_0px_rgba(0, 0, 0, 0.15)]"
             >
-              {resetPasswordMutation.isPending ? "Submitting..." : "Reset Password"}
+              {resetPasswordMutation.isPending
+                ? "Submitting..."
+                : "Reset Password"}
             </Button>
           </form>
         </Form>

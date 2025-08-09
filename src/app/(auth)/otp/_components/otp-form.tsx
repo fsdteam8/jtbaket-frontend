@@ -22,12 +22,14 @@ export default function OtpForm() {
   const router = useRouter();
 
   const email = searchParams.get("email");
-
+  const decodedEmail = decodeURIComponent(email || "");
   useEffect(() => {
     if (inputRefs.current[0]) {
       inputRefs.current[0].focus();
     }
   }, []);
+
+  // otp api integrtion
 
   const otpMutation = useMutation({
     mutationFn: async (bodyData: { email: string; otp: string }) => {
@@ -51,12 +53,40 @@ export default function OtpForm() {
     },
     onSuccess: (data, variables) => {
       toast.success(data.message || "OTP verified successfully");
-      router.push(`/reset-password?email=${encodeURIComponent(variables.email)}`);
+      router.push(
+        `/reset-password?email=${encodeURIComponent(variables.email)}`
+      );
     },
     onError: (error: Error) => {
       toast.error(error.message || "Invalid OTP");
     },
   });
+
+
+  // reset otp api integrattion
+      const { mutate:resentOtp, isPending: resentOtpPending } = useMutation({
+      mutationKey: ["resent-otp"],
+      mutationFn: (email: string) =>
+        fetch(
+          `${process.env.NEXT_PUBLIC_BASE_URL}/auth/forget-password`,
+          {
+            method: "POST",
+            headers: {
+              "content-type": "application/json",
+            },
+            body: JSON.stringify({ email }),
+          }
+        ).then((res) => res.json()),
+      onSuccess: (data, email) => {
+        if (!data?.status) {
+          toast.error(data?.message || "Something went wrong");
+          return;
+        } else {
+          toast.success(data?.message || "Email sent successfully!");
+          router.push(`/otp?email=${encodeURIComponent(email)}`);
+        }
+      },
+    });
 
   const handleChange = (index: number, value: string) => {
     if (!/^\d*$/.test(value)) return;
@@ -94,6 +124,11 @@ export default function OtpForm() {
         inputRefs.current[5].focus();
       }
     }
+  };
+
+  // handle resend otp
+  const handleResendOtp = async () => {
+    resentOtp(decodedEmail);
   };
 
   const handleVerify = async () => {
@@ -136,7 +171,9 @@ export default function OtpForm() {
               ref={(el) => {
                 inputRefs.current[index] = el;
               }}
-              className={`font-poppins w-[52px] h-[58px] bg-white text-primary placeholder:text-[#999999] text-center text-2xl font-medium leading-[120%] border-[1px] rounded-md focus:outline-none ${digit ? "border-black" : "border-[#595959]"}`}
+              className={`font-poppins w-[52px] h-[58px] bg-white text-primary placeholder:text-[#999999] text-center text-2xl font-medium leading-[120%] border-[1px] rounded-md focus:outline-none ${
+                digit ? "border-black" : "border-[#595959]"
+              }`}
               aria-label={`OTP digit ${index + 1}`}
             />
           ))}
@@ -148,10 +185,11 @@ export default function OtpForm() {
             Didn&apos;t Receive OTP?{" "}
           </span>
           <button
-            // onClick={handleResendOtp}
+            onClick={handleResendOtp}
+            disabled={resentOtpPending}
             className="text-base font-medium text-secondary hover:underline"
           >
-            Resend OTP
+            {resentOtpPending ? "Resending..." : "RESEND OTP"}
           </button>
         </div>
 
