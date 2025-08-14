@@ -89,7 +89,7 @@ const SignUpForm = () => {
     onSuccess: (data) => {
       if (data.status) {
         setIsOpen(true);
-        toast.success(data.message || "Registration successful");
+        // toast.success(data.message || "Registration successful");
         setTimeout(() => {
           router.push(callback ? `/login?callback=${callback}` : "/login");
         }, 3000);
