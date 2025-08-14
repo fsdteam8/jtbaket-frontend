@@ -1,13 +1,15 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
 import { useMutation } from "@tanstack/react-query";
-import { toast } from "sonner";
 import { useRouter, useSearchParams } from "next/navigation";
+import { useForm } from "react-hook-form";
+import { toast } from "sonner";
+import { z } from "zod";
 
+import SuccessfullyApprovedModal from "@/components/modals/sucessfully-approved-modal";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   Form,
   FormControl,
@@ -17,12 +19,10 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Eye, EyeOff } from "lucide-react";
-import { useState } from "react";
-import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
+import { Eye, EyeOff } from "lucide-react";
 import Link from "next/link";
-import SuccessfullyApprovedModal from "@/components/modals/sucessfully-approved-modal";
+import { useState } from "react";
 
 // 🛠️ Schema updated: fullName ➝ name
 const formSchema = z
@@ -82,7 +82,7 @@ const SignUpForm = () => {
           name: data.name,
           email: data.email,
           password: data.password,
-          phone: data.phone
+          phone: data.phone,
         }),
       }).then((res) => res.json());
     },
@@ -104,7 +104,6 @@ const SignUpForm = () => {
 
   function onSubmit(values: SignUpFormValues) {
     registeruser(values);
-
   }
 
   return (
@@ -118,7 +117,10 @@ const SignUpForm = () => {
         </h3>
 
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6 pt-5 md:pt-6">
+          <form
+            onSubmit={form.handleSubmit(onSubmit)}
+            className="space-y-6 pt-5 md:pt-6"
+          >
             {/* Name */}
             <FormField
               control={form.control}
@@ -209,7 +211,9 @@ const SignUpForm = () => {
                       <button
                         type="button"
                         className="absolute top-2 right-4"
-                        onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                        onClick={() =>
+                          setShowConfirmPassword(!showConfirmPassword)
+                        }
                       >
                         {showConfirmPassword ? <Eye /> : <EyeOff />}
                       </button>
@@ -233,7 +237,9 @@ const SignUpForm = () => {
                       onCheckedChange={field.onChange}
                     />
                   </FormControl>
-                  <Label htmlFor="rememberMe">I agree to the terms & conditions</Label>
+                  <Label htmlFor="rememberMe">
+                    I agree to the terms & conditions
+                  </Label>
                   <FormMessage />
                 </FormItem>
               )}
@@ -263,8 +269,8 @@ const SignUpForm = () => {
         <SuccessfullyApprovedModal
           open={isOpen}
           onOpenChange={() => setIsOpen(false)}
-          title="Successfully Approved Your Account"
-          desc="Your affiliate account has been approved"
+          title="Application Pending Review"
+          desc="Thanks for applying! An admin will review your affiliate application. We'll notify you once it's approved."
         />
       )}
     </div>
