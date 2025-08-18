@@ -1,8 +1,13 @@
 // components/LogoutModal.tsx
 "use client";
 
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { signOut } from "next-auth/react";
 
 interface LogoutModalProps {
@@ -18,7 +23,7 @@ const LogoutModal = ({ open, onClose }: LogoutModalProps) => {
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-md bg-white/80">
+      <DialogContent className="sm:max-w-md bg-white">
         <DialogHeader>
           <DialogTitle>Confirm Logout</DialogTitle>
         </DialogHeader>
@@ -28,7 +33,10 @@ const LogoutModal = ({ open, onClose }: LogoutModalProps) => {
             <Button variant="outline" onClick={onClose}>
               Cancel
             </Button>
-            <Button className="bg-red-600 text-white" onClick={handleLogout}>
+            <Button
+              className="bg-red-600 hover:bg-red-600/80 text-white"
+              onClick={handleLogout}
+            >
               Logout
             </Button>
           </div>

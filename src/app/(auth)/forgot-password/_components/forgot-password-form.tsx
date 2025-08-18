@@ -14,10 +14,10 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import Link from "next/link";
 import { useMutation } from "@tanstack/react-query";
-import { toast } from "sonner";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 
 const formSchema = z.object({
   email: z.string().email({
@@ -66,11 +66,9 @@ const ForgotPasswordForm = () => {
     },
   });
 
-
-
   // 2. Define a submit handler.
   function onSubmit(values: z.infer<typeof formSchema>) {
-    forgotPassMutation.mutate(values)
+    forgotPassMutation.mutate(values);
   }
 
   return (
@@ -124,14 +122,20 @@ const ForgotPasswordForm = () => {
             />
 
             <Button
-              className="text-lg font-bold text-[#F8FAF9] leading-[120%] rounded-full w-full h-[52px] bg-primary shadow-[0px_4px_4px_0px_rgba(0, 0, 0, 0.15)]"
+              className="text-white w-full rounded-[50px] h-[50px] text-lg hover:bg-black/80 disabled:opacity-50"
+              disabled={forgotPassMutation.isPending}
               type="submit"
             >
               {forgotPassMutation.isPending ? "Sending..." : "Send"}
             </Button>
             <p className="flex items-center justify-center gap-1 text-sm font-medium leading-[120%] ">
-              <Link className="hover:underline text-[#293440]" href="/login">Back to Login</Link>
-              <Link href="/sign-up" className="text-secondary pl-1 hover:underline">
+              <Link className="hover:underline text-[#293440]" href="/login">
+                Back to Login
+              </Link>
+              <Link
+                href="/sign-up"
+                className="text-secondary pl-1 hover:underline"
+              >
                 Register Here Now
               </Link>{" "}
             </p>
